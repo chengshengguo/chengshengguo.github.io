@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0e7c66" />
+    <title>Mickey 星空学习站 · 探索宇宙与思维训练</title>
+    <meta
+      name="description"
+      content="为 Mickey 打造的探索式学习站：天文科普、太阳系模型、五子棋、数独与记忆训练，寓教于乐。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&family=Orbitron:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <!-- 导航 -->
+      <nav class="navbar">
+        <a class="brand" href="index.html">
+          <span class="logo">🚀</span>
+          <span>Mickey 星空学习站</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html" class="active">首页</a>
+          <a href="astronomy.html">天文科普</a>
+          <a href="solar-system.html">太阳系模型</a>
+          <a href="gomoku.html">五子棋</a>
+          <a href="sudoku/">数独</a>
+          <a href="memory.html">记忆训练</a>
+          <a href="english/">🅰️ 英语</a>
+          <a href="math.html">➕ 口算</a>
+          <a href="chinese/">📜 语文</a>
+          <a href="learn_plan/index.html">📅 暑假计划</a>
+          <a href="piano/">🎹 钢琴</a>
+        </div>
+      </nav>
+
+      <!-- Hero -->
+      <header class="hero container">
+        <span class="eyebrow">Learn · Explore · Play</span>
+        <h1>在星河之间<br />开启你的探索之旅</h1>
+        <p class="lead">
+          这里是为 Mickey 精心准备的学习乐园：仰望星空认识宇宙，动手把玩太阳系模型，
+          也能在五子棋、数独与记忆训练中锻炼思维。知识，从此不再枯燥。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="solar-system.html">🪐 漫游太阳系</a>
+          <a class="btn" href="astronomy.html">📖 天文科普</a>
+          <a class="btn" href="learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </header>
+
+      <!-- 暑假计划入口 -->
+      <section class="section container" style="padding-top: 0">
+        <a class="card" href="learn_plan/index.html" style="flex-direction: row; align-items: center; justify-content: space-between; gap: 16px">
+          <div class="flex" style="gap: 18px; align-items: center">
+            <div class="icon">📅</div>
+            <div>
+              <h3 style="margin: 0">Mickey 的暑假学习计划</h3>
+              <p style="margin: 4px 0 0">阅读优先 · 语数英均衡 · 运动、钢琴与休息兼顾。点此查看完整每日安排。</p>
+            </div>
+          </div>
+          <span class="more">查看计划 →</span>
+        </a>
+      </section>
+
+      <!-- 知识链接 -->
+      <section class="section container">
+        <div class="section-head">
+          <h2>探索模块</h2>
+          <p>沿着兴趣出发，每一个模块都是一扇通往新知识的大门。</p>
+        </div>
+        <div class="grid" id="cards">
+          <a class="card" href="astronomy.html">
+            <div class="icon">🔭</div>
+            <h3>天文科普</h3>
+            <p>从太阳系到银河系、仙女座、拉尼亚凯亚，一直讲到整个宇宙。</p>
+            <span class="more">开始阅读 →</span>
+          </a>
+          <a class="card" href="solar-system.html">
+            <div class="icon">🪐</div>
+            <h3>太阳系模型</h3>
+            <p>可交互的太阳系运行模型，观察行星公转，点击了解每颗星球的秘密。</p>
+            <span class="more">进入模型 →</span>
+          </a>
+          <a class="card" href="english/">
+            <div class="icon">🅰️</div>
+            <h3>英语学习</h3>
+            <p>动物、颜色、数字、日常用语单词卡，点一下就能听发音。</p>
+            <span class="more">开始学习 →</span>
+          </a>
+          <a class="card" href="math.html">
+            <div class="icon">➕</div>
+            <h3>口算闯关</h3>
+            <p>加、减、乘混合练习，计时计分，帮三年级打好计算基础。</p>
+            <span class="more">来挑战 →</span>
+          </a>
+          <a class="card" href="chinese/">
+            <div class="icon">📜</div>
+            <h3>语文天地</h3>
+            <p>小学生必背古诗 + 常用成语，点一下听朗读，轻松积累。</p>
+            <span class="more">读一读 →</span>
+          </a>
+          <a class="card" href="gomoku.html">
+            <div class="icon">⚫</div>
+            <h3>五子棋</h3>
+            <p>经典对弈，支持人机对战与双人对战，人机还会思考几步哦。</p>
+            <span class="more">来一局 →</span>
+          </a>
+          <a class="card" href="sudoku/">
+            <div class="icon">🔢</div>
+            <h3>数独</h3>
+            <p>从入门到挑战，自动出题、实时校验、提示与计时，逻辑训练好帮手。</p>
+            <span class="more">挑战自己 →</span>
+          </a>
+          <a class="card" href="memory.html">
+            <div class="icon">🧠</div>
+            <h3>记忆训练</h3>
+            <p>翻牌配对小游戏，多种难度，在玩耍中提升观察力与记忆力。</p>
+            <span class="more">开始训练 →</span>
+          </a>
+          <a class="card" href="piano/">
+            <div class="icon">🎹</div>
+            <h3>钢琴小宇宙</h3>
+            <p>学琴 2 年+ 的成长地图：教材知识点百科、进阶路线图，按曲目整理、可用时间轴回看每次练习视频。</p>
+            <span class="more">弹起来 →</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- 为什么喜欢 -->
+      <section class="section container">
+        <div class="section-head">
+          <h2>为什么在这里学习</h2>
+          <p>把知识变成可以"玩"的东西，好奇心自然会一直在线。</p>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <div class="icon">🌟</div>
+            <h3>沉浸式体验</h3>
+            <p>星空背景、动态模型，让抽象知识变得可感可触。</p>
+          </div>
+          <div class="card">
+            <div class="icon">🎯</div>
+            <h3>边玩边学</h3>
+            <p>游戏化设计，在五子棋与数独中悄悄提升思维能力。</p>
+          </div>
+          <div class="card">
+            <div class="icon">📚</div>
+            <h3>知识成体系</h3>
+            <p>天文科普由浅入深，建立对宇宙的完整认知框架。</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="container">
+          <p>✨ Mickey 星空学习站 · 为好奇心而生</p>
+          <p class="muted">本站为静态页面，无需联网即可游玩（字体等可联网加载更佳）。</p>
+        </div>
+      </footer>
+    </div>
+
+    <script src="js/starfield.js"></script>
+    <script>
+      // 卡片光标跟随高光
+      document.querySelectorAll(".card").forEach((c) => {
+        c.addEventListener("mousemove", (e) => {
+          const r = c.getBoundingClientRect();
+          c.style.setProperty("--mx", `${e.clientX - r.left}px`);
+          c.style.setProperty("--my", `${e.clientY - r.top}px`);
+        });
+      });
+    </script>
+  </body>
+</html>

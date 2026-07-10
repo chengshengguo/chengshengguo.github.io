@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0e7c66" />
+    <title>📖 教材知识点 · 钢琴小宇宙</title>
+    <meta name="description" content="钢琴教材知识点百科：汤普森（小汤/大汤）、车尔尼 599/849/299/740、哈农、乐曲文献与钢琴术语速查。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="piano.css" />
+    <style>
+      .kb-nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 18px 0 8px; }
+      .kb-nav a { font-size: .85rem; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel); color: var(--muted); text-decoration: none; }
+      .kb-nav a:active, .kb-nav a:hover { color: #fff; border-color: var(--border-glow); }
+      .book-card h3 .en { display:block; font-size:.8rem; font-weight:400; color: var(--muted); margin-top:2px; letter-spacing:.5px; }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="../index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="../index.html">首页</a>
+          <a href="../astronomy.html">天文科普</a>
+          <a href="../solar-system.html">太阳系模型</a>
+          <a href="../gomoku.html">五子棋</a>
+          <a href="../sudoku/">数独</a>
+          <a href="../memory.html">记忆训练</a>
+          <a href="../english/">🅰️ 英语</a>
+          <a href="../math.html">➕ 口算</a>
+          <a href="../chinese/">📜 语文</a>
+          <a href="../learn_plan/index.html">📅 暑假计划</a>
+          <a href="index.html" class="active">🎹 钢琴</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <a class="back-home" href="index.html">← 返回钢琴主页</a>
+        <span class="eyebrow">Piano Textbook Guide</span>
+        <h1>📖 教材知识点百科</h1>
+        <p>每本教材"谁写的 / 练什么 / 什么时候用 / 小贴士"，拆到技术颗粒，方便孩子复习、家长陪练。</p>
+        <div class="kb-nav">
+          <a href="#xiaotang">🟢 小汤</a>
+          <a href="#datang">🔵 大汤</a>
+          <a href="#czerny">🟤 车尔尼</a>
+          <a href="#hanon">🤲 哈农</a>
+          <a href="#literature">🎼 乐曲文献</a>
+          <a href="#glossary">📐 术语速查</a>
+        </div>
+      </header>
+
+      <!-- 小汤 -->
+      <section class="section container" id="xiaotang">
+        <div class="book-card">
+          <h3>🟢 小汤｜《约翰·汤普森简易钢琴教程》<span class="en">John Thompson's Easiest Piano Course · 1–8 册</span></h3>
+          <div class="sub">原版社：美国 Willis Music｜国内版：上海音乐出版社（彩版 / 扫码音频版）｜定位：零基础启蒙，图文多、进度慢，4–6 岁幼童 / 成人零基础</div>
+          <table class="mini-table">
+            <thead><tr><th>册</th><th>识谱与乐理</th><th>技术训练</th><th>代表小曲</th></tr></thead>
+            <tbody>
+              <tr><td><b>1</b></td><td>高/低音谱号、中央 C、全/二分/四分音符</td><td>非连奏手型、断奏、二指起步</td><td>《请弹吧》《爷爷的大钟》</td></tr>
+              <tr><td><b>2</b></td><td>八分音符、附点、G 五指位</td><td>连奏萌芽、旋律+伴奏分工</td><td>《火车》《海军工兵》</td></tr>
+              <tr><td><b>3</b></td><td>F 位、两手交叉、同音连线、f/p</td><td>双音（3 度）、跳音、音阶初现</td><td>《古老的曲调》《农民舞曲》</td></tr>
+              <tr><td><b>4</b></td><td>升降号（F/G 大调）、切分、十六分音符</td><td>音阶双手、踏板初用、乐句呼吸</td><td>《牛仔之歌》《假日之歌》</td></tr>
+              <tr><td><b>5</b></td><td>D/A 大调、6/8 拍、装饰音雏形</td><td>三连音、分解和弦、小奏鸣曲感</td><td>接近大汤 1 难度</td></tr>
+            </tbody>
+          </table>
+          <div class="tip">📌 国内常跳过 6–8 册直接转大汤 1。每册结尾的"技巧复习页"+"书写作业"（写音符、画拍号）是识谱地基，<b>别跳过</b>。谱面基本配伴奏谱，可以和老师/爸妈四手联弹 🎵</div>
+        </div>
+      </section>
+
+      <!-- 大汤 -->
+      <section class="section container" id="datang">
+        <div class="book-card">
+          <h3>🔵 大汤｜《约翰·汤普森现代钢琴教程》<span class="en">John Thompson's Modern Course for the Piano · 1–5 册</span></h3>
+          <div class="sub">定位：小汤之后 / 或 6 岁以上直接上。按音乐史顺序串古典小品，第一册就讲音阶、和弦转位、十六分音符，进度比小汤快。大汤 2 起可加 599 + 哈农；大汤 5 ≈ 考级 7–8 级乐曲难度。</div>
+          <table class="mini-table">
+            <thead><tr><th>册</th><th>技术 / 乐理新点</th><th>代表曲目（国内版常见）</th></tr></thead>
+            <tbody>
+              <tr><td><b>1</b></td><td>音阶指法（C/G/D/F）、和弦转位、十六分音符、踏板初用</td><td>《春之歌》《浪漫曲》《练习曲》</td></tr>
+              <tr><td><b>2</b></td><td>复调感（两手独立旋律）、降号调、圆舞曲节奏</td><td>《在教堂》《比尔的山羊》、小巴赫片段</td></tr>
+              <tr><td><b>3</b></td><td>三连音、装饰音（倚音/波音）、琶音、双降</td><td>布格缪勒《阿拉伯风》《清澈的溪水》混入</td></tr>
+              <tr><td><b>4</b></td><td>快速跑动、左手琶音伴奏、中段转调、长乐句</td><td>克列门蒂小奏鸣曲 Op.36 出现</td></tr>
+              <tr><td><b>5</b></td><td>多声部、踏板换踩、复杂装饰音、奏鸣曲式小快板</td><td>肖邦/舒曼简化改编、海顿小曲</td></tr>
+            </tbody>
+          </table>
+          <div class="tip">💡 大汤 3 起建议同步加 <b>599 后半 + 巴赫初级钢琴曲集</b>，不然两手各弹各的会懵。</div>
+          <div class="warn">⚠️ 小汤 vs 大汤：两套是<b>独立线</b>，不是简单的"小→大"升级。4–6 岁零基础→小汤 1；6–8 岁/成人零基础→可直接大汤 1，或 小汤 1–2 速通后转大汤 1。</div>
+        </div>
+      </section>
+
+      <!-- 车尔尼 -->
+      <section class="section container" id="czerny">
+        <div class="book-card">
+          <h3>🟤 车尔尼系列<span class="en">Carl Czerny（1791–1857，奥地利，贝多芬的学生）</span></h3>
+          <div class="sub">车尔尼不是"弹完"而是"挑着弹"——老师会挑号；每首标了速度要求（♩=多少），达标才算过，不然"糊过去"没用。299 起可配克拉莫《60 首》。</div>
+          <table class="mini-table">
+            <thead><tr><th>代号</th><th>完整中文名</th><th>作品号</th><th>定位</th><th>衔接节点</th></tr></thead>
+            <tbody>
+              <tr><td><b>599</b></td><td>《钢琴初步教程》</td><td>Op.599</td><td>初级，100 条，每条短</td><td>小汤 5 / 大汤 2 加入</td></tr>
+              <tr><td><b>849</b></td><td>《钢琴流畅练习曲》</td><td>Op.849</td><td>中级过渡，30 条，训练跑动流畅</td><td>599 弹完 → 849</td></tr>
+              <tr><td><b>299</b></td><td>《钢琴快速练习曲》</td><td>Op.299</td><td>中高级，40 条，左右手独立、颗粒性</td><td>849 弹完 → 299</td></tr>
+              <tr><td><b>740</b></td><td>《钢琴手指灵巧练习曲》<br>（亦作《钢琴练习曲 50 首》）</td><td>Op.740</td><td>高级，50 条，速度+力度+均匀度</td><td>299 弹完 → 740</td></tr>
+            </tbody>
+          </table>
+
+          <h3 style="margin-top:26px;font-size:1.1rem">599 内部 7 类练习逻辑（100 条）</h3>
+          <table class="mini-table">
+            <tbody>
+              <tr><td><b>1–10</b></td><td>纯识谱 + 固定五指位，非连音</td></tr>
+              <tr><td><b>11–18</b></td><td>五指独立性 + 均匀性，连奏/重音记号</td></tr>
+              <tr><td><b>19–26</b></td><td>拇指移位（穿指/跨指）关键期，拇指要松弛主动</td></tr>
+              <tr><td><b>27–31</b></td><td>音域超八度，注意高八度记号</td></tr>
+              <tr><td><b>32 起</b></td><td>低音谱表正式进入</td></tr>
+              <tr><td><b>36 起</b></td><td>升/降号出现（F/G/D 大调），别漏看临时变音</td></tr>
+              <tr><td><b>61–100</b></td><td>音阶、琶音、双音、装饰音综合</td></tr>
+            </tbody>
+          </table>
+          <div class="tip">📌 装饰音小专题：第 <b>73</b> 条=回音，第 <b>74</b> 条=颤音，第 <b>83</b> 条=倚音，第 <b>95</b> 条=波音——可单独抽出来练。</div>
+
+          <h3 style="margin-top:26px;font-size:1.1rem">849 / 299 / 740 核心目标</h3>
+          <table class="mini-table">
+            <tbody>
+              <tr><td><b>849</b></td><td>跑动"流起来"：乐句连贯 + 速度恒定。技术标签：左右手快速音阶/琶音交替、阿尔贝蒂低音、轮指。♩=100 以上才算过。</td></tr>
+              <tr><td><b>299</b></td><td>手指独立性 + 颗粒性 + 速度（♩=120–160）。技术标签：双手八度、重复音、跨越大跳、复节奏（3 对 2）、震音。业余考级 8–10 级分水岭。</td></tr>
+              <tr><td><b>740</b></td><td>音乐会级技术储备。技术标签：双音音阶、三度六度平行、八度断奏、快速琶音、装饰音炫技。弹完可接肖邦练习曲 Op.10/25。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 哈农 -->
+      <section class="section container" id="hanon">
+        <div class="book-card">
+          <h3>🤲 哈农｜《哈农钢琴练指法》<span class="en">Charles-Louis Hanon（法）· Le Pianiste Virtuose · 1873，60 条</span></h3>
+          <div class="sub">分三部分。大汤 2–3 册起可进，手指力量弱要更早。每天 10–15 分钟，<b>开头热身</b>用（手没开弹哈农没意义）。</div>
+          <table class="mini-table">
+            <thead><tr><th>部分</th><th>条号</th><th>练什么</th><th>重点</th></tr></thead>
+            <tbody>
+              <tr><td>第一部分</td><td>1–20</td><td>五指独立性，1–5 指均匀发力</td><td>每天 1–2 条，慢练，手腕不僵</td></tr>
+              <tr><td>第二部分</td><td>21–43</td><td>音阶 / 琶音 / 属七减七预备</td><td>20–31 是黄金段，接 599 后半正好</td></tr>
+              <tr><td>第三部分</td><td>44–60</td><td>八度、颤音、重复音、手腕柔顺</td><td>51 条专攻八度，手小可晚点进</td></tr>
+            </tbody>
+          </table>
+          <div class="tip">📌 变奏练法（避免枯燥）：原速 → 附点节奏（长-短/短-长）→ 断奏 → 强-弱力度变化。每条先单手后合手，指法严格锁死，肌肉记忆一次定型。低龄手小可《孩子们的哈农》起步。</div>
+        </div>
+      </section>
+
+      <!-- 乐曲文献 -->
+      <section class="section container" id="literature">
+        <div class="book-card">
+          <h3>🎼 乐曲文献与进阶<span class="en">弹"作品"才算会弹琴——技术之后走向音乐</span></h3>
+          <div class="sub">技术练习解决"手指能不能弹出来"，这一组解决"弹出来像不像音乐"。通常在 740 前后、或同步穿插进入。</div>
+          <table class="mini-table">
+            <thead><tr><th>教材 / 作品</th><th>作者</th><th>定位与说明</th></tr></thead>
+            <tbody>
+              <tr><td>巴赫《初级钢琴曲集》</td><td>J.S. 巴赫</td><td>复调入门，两手各自独立旋律，大汤 3 起可加</td></tr>
+              <tr><td>巴赫《创意曲》</td><td>J.S. 巴赫</td><td>二声部 BWV 772–786（15 首）、三声部 BWV 787–801（15 首）</td></tr>
+              <tr><td>《平均律钢琴曲集》</td><td>J.S. 巴赫</td><td>高级，前奏曲+赋格，音乐会/考学必备</td></tr>
+              <tr><td>小奏鸣曲</td><td>克列门蒂 Op.36 / 库劳 Op.55 / 杜舍克</td><td>古典奏鸣曲式入门，大汤 4 起；克列门蒂 Op.36 最常用</td></tr>
+              <tr><td>布格缪勒《25 首简易练习曲》Op.100</td><td>J.F. 布格缪勒</td><td>⚠️ 俗称"布格缪勒 100"是<b>作品号 100</b>，并非 100 首，实际只有 <b>25 首</b>；旋律优美，技术与音乐兼顾</td></tr>
+              <tr><td>拜厄《钢琴基础教程》</td><td>F. 拜厄</td><td>约 109 条，常在小汤同期或之前打基础</td></tr>
+              <tr><td>莱蒙《50 首练习曲》Op.37</td><td>H. 莱蒙</td><td>介于 599 与 849 之间，旋律性好，过渡用</td></tr>
+              <tr><td>克拉莫《60 首练习曲》</td><td>J.B. 克拉莫</td><td>与 299 配合，专攻手指独立与均匀</td></tr>
+              <tr><td>肖邦练习曲</td><td>F. 肖邦</td><td>Op.10（12 首）/ Op.25（12 首）+ 3 首新练习曲；740 之后接</td></tr>
+              <tr><td>李斯特</td><td>F. 李斯特</td><td>超技练习曲、帕格尼尼练习曲、匈牙利狂想曲</td></tr>
+            </tbody>
+          </table>
+          <div class="tip">💡 路线里"中间插拜厄、布格缪勒 100、莱蒙等"指的就是上表这些<b>穿插教材</b>——不是主线，而是老师按孩子短板补的支线。</div>
+        </div>
+      </section>
+
+      <!-- 术语 -->
+      <section class="section container" id="glossary">
+        <div class="book-card">
+          <h3>📐 钢琴小百科（术语速查）</h3>
+          <div class="sub">翻谱子遇到看不懂的记号，先来这查。</div>
+          <table class="mini-table">
+            <tbody>
+              <tr><td><b>连奏 Legato</b></td><td>音与音连贯不断开，谱上弧线（连音线）标记</td></tr>
+              <tr><td><b>断奏 / 跳音 Staccato</b></td><td>音短促、离键快，小圆点（·）或短横线（▽）</td></tr>
+              <tr><td><b>非连奏 Non-legato</b></td><td>不连也不跳，独立清晰，初学手型常用</td></tr>
+              <tr><td><b>踏板</b></td><td>右=延音（最常用）；中=持音；左=柔音（弱音）</td></tr>
+              <tr><td><b>音阶 / 琶音</b></td><td>手指跑动基石；属七 / 减七是和声预备</td></tr>
+              <tr><td><b>阿尔贝蒂低音</b></td><td>左手把和弦音"低-高-中-高"分解的固定伴奏型</td></tr>
+              <tr><td><b>装饰音</b></td><td>倚音（小斜线，落重音）/ 波音（﹋）/ 颤音（tr，快速交替）/ 回音（∞，绕一圈）</td></tr>
+              <tr><td><b>穿指 / 跨指</b></td><td>拇指从其他指下穿过（上行）/ 手指从拇指上跨过（下行），音阶流畅关键</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="book-card">
+          <h3>✅ 一页速记（贴琴边）</h3>
+          <p style="color:var(--muted);line-height:2">
+            <b style="color:var(--text)">主线</b>：小汤 1–5 → 大汤 1–2 → 哈农 + 599 → 大汤 3 + 849 → 大汤 4–5 + 299 → 740 → 巴赫 / 小奏鸣曲 / 肖邦 / 李斯特<br />
+            <b style="color:var(--text)">支线（按需穿插）</b>：拜厄、布格缪勒 Op.100（25 首）、莱蒙 Op.37、克拉莫 60<br />
+            <b style="color:var(--text)">每日基本功</b>：哈农 10–15 分钟热身（慢→原速→变节奏），车尔尼挑号达标速度才算过<br />
+            <b style="color:var(--text)">三大易错点</b>：升降号 · 低音谱表 · 踏板
+          </p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="container">
+          <p>✨ Mickey 星空学习站 · 钢琴小宇宙</p>
+          <p class="muted"><a href="index.html" style="color:var(--accent-2)">← 返回钢琴主页</a> · <a href="v2/" style="color:var(--accent-2)">打开另一个精美版本「小小钢琴家」→</a> · 本站为静态页面，无需联网即可使用。</p>
+        </div>
+      </footer>
+    </div>
+    <script src="../js/starfield.js"></script>
+  </body>
+</html>

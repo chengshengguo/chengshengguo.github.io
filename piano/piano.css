@@ -1,0 +1,266 @@
+/* ===== 钢琴小宇宙 · 专属样式 ===== */
+/* 复用 css/style.css 的配色变量，这里只补充钢琴栏目需要的组件 */
+
+/* 钢琴键装饰条 */
+.piano-keys {
+  display: flex;
+  height: 46px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  border: 1px solid var(--border);
+  max-width: 520px;
+  margin: 0 auto;
+}
+.piano-keys .wk {
+  flex: 1;
+  background: linear-gradient(180deg, #fdfdfd, #e7e9ee);
+  border-right: 1px solid #c4c8d2;
+  position: relative;
+}
+.piano-keys .wk:last-child { border-right: none; }
+.piano-keys .bk {
+  flex: 0 0 4%;
+  background: linear-gradient(180deg, #2a2f3e, #05070d);
+  border-radius: 0 0 4px 4px;
+  margin: 0 -2%;
+  z-index: 2;
+  align-self: stretch;
+  height: 62%;
+  box-shadow: 0 4px 6px rgba(0,0,0,.5);
+}
+
+/* ===== 路线图（竖向时间轴） ===== */
+.roadmap {
+  position: relative;
+  max-width: 920px;
+  margin: 0 auto;
+  padding-left: 8px;
+}
+.roadmap::before {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent-3), var(--accent), var(--gold));
+  border-radius: 3px;
+  opacity: .5;
+}
+.stage {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  padding: 14px 0 26px 64px;
+}
+.stage .node {
+  position: absolute;
+  left: 12px;
+  top: 16px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 15px;
+  background: var(--bg-2);
+  border: 2px solid var(--accent-2);
+  box-shadow: 0 0 0 5px rgba(25,195,163,.12), 0 0 18px rgba(25,195,163,.35);
+  z-index: 1;
+}
+.stage .stage-body {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  backdrop-filter: blur(8px);
+  transition: .25s;
+}
+.stage .stage-body:hover { border-color: var(--border-glow); transform: translateX(4px); }
+.stage h3 { margin: 0 0 4px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.stage .lvl { font-size: .72rem; padding: 3px 10px; border-radius: 999px; background: rgba(244,201,93,.14); border: 1px solid rgba(244,201,93,.35); color: var(--gold); }
+.stage .goal { color: var(--accent-2); font-weight: 600; margin: 8px 0 6px; font-size: .95rem; }
+.stage p { margin: 0; color: var(--muted); font-size: .92rem; }
+.stage .books { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== 学习历程 / 视频时间轴 ===== */
+.tabs {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 26px;
+}
+.tab {
+  padding: 11px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: .95rem;
+  transition: .25s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.tab .dot { width: 10px; height: 10px; border-radius: 50%; }
+.tab.active { color: #fff; border-color: transparent; background: linear-gradient(120deg, var(--accent), var(--accent-2)); box-shadow: 0 8px 22px rgba(25,195,163,.4); }
+
+.player-wrap {
+  max-width: 860px; margin: 0 auto 22px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #000;
+  box-shadow: var(--shadow);
+}
+.player-wrap video { width: 100%; display: block; background: #000; }
+.player-meta { text-align: center; color: var(--muted); font-size: .9rem; margin: -6px 0 18px; }
+.player-meta b { color: var(--text); }
+
+/* 时间轴 chips */
+.timeline {
+  display: flex; gap: 12px;
+  overflow-x: auto;
+  padding: 14px 4px 20px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  max-width: 920px; margin: 0 auto;
+}
+.timeline::-webkit-scrollbar { height: 6px; }
+.timeline::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 6px; }
+.tl-node {
+  flex: 0 0 auto;
+  width: 116px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  padding-top: 22px;
+}
+.tl-node::before {
+  content: "";
+  position: absolute;
+  top: 6px; left: 50%;
+  width: 14px; height: 14px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--bg-2);
+  border: 2px solid var(--accent);
+  transition: .2s;
+}
+.tl-node::after {
+  content: "";
+  position: absolute;
+  top: 12px; left: 50%;
+  width: 100%; height: 2px;
+  background: var(--border);
+  z-index: -1;
+}
+.tl-node:last-child::after { display: none; }
+.tl-node .date { font-size: .82rem; color: var(--muted); }
+.tl-node .tag { font-size: .72rem; margin-top: 4px; }
+.tl-node.active::before { background: var(--pc, var(--accent-2)); box-shadow: 0 0 12px var(--pc, var(--accent-2)); }
+.tl-node.active .date { color: var(--text); font-weight: 700; }
+.tl-node:active::before { transform: translateX(-50%) scale(1.2); }
+
+/* ===== 返回主界面按钮（子页面通用） ===== */
+.back-home {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .85rem; font-weight: 600;
+  padding: 8px 15px; border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border-glow);
+  color: var(--text); text-decoration: none;
+  margin-bottom: 14px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.back-home:hover { color: var(--text); border-color: var(--accent-2); }
+.back-home:active { background: var(--accent-2); color: #04201b; border-color: var(--accent-2); }
+
+/* ===== 以曲目为主线的成长块 ===== */
+.piece {
+  max-width: 920px;
+  margin: 0 auto 40px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-top: 3px solid var(--pc, var(--accent-2));
+  padding: 22px clamp(16px, 3vw, 26px);
+  backdrop-filter: blur(8px);
+}
+.piece-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.piece-ico {
+  width: 50px; height: 50px; flex: 0 0 auto;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  font-size: 24px;
+  background: rgba(255,255,255,.06);
+  background: color-mix(in srgb, var(--pc, #19c3a3) 22%, transparent);
+  border: 1px solid var(--pc, var(--border-glow));
+}
+.piece h3 { margin: 0; font-size: 1.32rem; }
+.piece-sub { color: var(--muted); font-size: .88rem; margin-top: 3px; }
+.player-wrap { position: relative; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+.pv { width: 100%; display: block; background: #000; border-radius: 14px; }
+.pv-ph {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  color: var(--muted); font-size: .95rem; text-align: center; padding: 20px;
+  background: radial-gradient(circle at 50% 38%, rgba(255,255,255,.06), rgba(0,0,0,.65));
+  pointer-events: none;
+}
+.pv-ph .big { font-size: 38px; line-height: 1; color: var(--pc, var(--accent-2)); }
+.pv.err + .pv-ph { color: #ff9a9a; }
+
+/* ===== 教材百科（卡片 / 表格） ===== */
+.book-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  backdrop-filter: blur(8px);
+  margin-bottom: 22px;
+}
+.book-card h3 { margin: 0 0 4px; font-size: 1.35rem; }
+.book-card .sub { color: var(--muted); font-size: .9rem; margin-bottom: 14px; }
+.mini-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .9rem; overflow: hidden; border-radius: 12px; }
+.mini-table th, .mini-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+.mini-table th { background: rgba(25,195,163,.10); color: var(--accent-2); font-weight: 600; }
+.mini-table tr:last-child td { border-bottom: none; }
+.mini-table td b { color: var(--gold); }
+.tip {
+  border-left: 3px solid var(--gold);
+  background: rgba(244,201,93,.08);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-top: 14px;
+  font-size: .92rem;
+  color: #f3e2b8;
+}
+.warn {
+  border-left: 3px solid #ff8a8a;
+  background: rgba(255,120,120,.08);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-top: 14px;
+  font-size: .92rem;
+  color: #ffd0d0;
+}
+
+.kb-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); }
+.kb-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; backdrop-filter: blur(8px); transition: .25s; }
+.kb-card:hover { border-color: var(--border-glow); transform: translateY(-4px); }
+.kb-card .icon { font-size: 30px; }
+.kb-card h3 { margin: 10px 0 6px; }
+.kb-card p { margin: 0; color: var(--muted); font-size: .92rem; }
+
+/* iPad 触控微调 */
+@media (hover: none) {
+  .stage .stage-body:hover { transform: none; }
+  .kb-card:hover { transform: none; }
+  .tab:active { transform: scale(.97); }
+}
+@media (max-width: 640px) {
+  .stage { padding-left: 52px; gap: 12px; }
+  .roadmap::before { left: 20px; }
+  .stage .node { left: 6px; }
+  .tl-node { width: 100px; }
+}

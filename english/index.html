@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>英语学习 · Mickey 星空学习站</title>
+    <meta name="description" content="覆盖小学阶段的英语单词、句型与听力测验，进度保存在浏览器本地数据库。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="../index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="../index.html">首页</a>
+          <a href="../astronomy.html">天文科普</a>
+          <a href="../solar-system.html">太阳系模型</a>
+          <a href="../english/" class="active">🅰️ 英语</a>
+          <a href="../math.html">➕ 口算</a>
+          <a href="../chinese/">📜 语文</a>
+          <a href="../gomoku.html">五子棋</a>
+          <a href="../sudoku/">数独</a>
+          <a href="../memory.html">记忆训练</a>
+          <a href="../learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <span class="eyebrow">English</span>
+        <h1>🅰️ 英语学习</h1>
+        <p>覆盖整个小学阶段的单词、句型与听力测验。点 🔊 听纯正发音，点 ⭐ 收藏、✅ 标记已掌握，进度自动保存在你的浏览器本地数据库里。</p>
+      </header>
+
+      <section class="section container">
+        <div class="stats" id="stats"></div>
+
+        <div class="tabs" id="tabs">
+          <button class="tab sel" data-t="word">📚 单词卡</button>
+          <button class="tab" data-t="phrase">💬 常用句型</button>
+          <button class="tab" data-t="quiz">🎯 听力测验</button>
+        </div>
+
+        <div class="toolbar" id="toolWord">
+          <input id="wordSearch" class="search" placeholder="搜索单词 / 中文意思…" />
+          <select id="wordGrade" class="select">
+            <option value="all">全部年级</option>
+            <option value="1">一年级以内</option>
+            <option value="2">二年级以内</option>
+            <option value="3">三年级以内</option>
+            <option value="4">四年级以内</option>
+            <option value="5">五年级以内</option>
+            <option value="6">六年级以内</option>
+          </select>
+          <div class="cats" id="wordCats"></div>
+        </div>
+
+        <div class="toolbar" id="toolPhrase" style="display:none">
+          <input id="phraseSearch" class="search" placeholder="搜索英文句型 / 中文…" />
+          <select id="phraseCat" class="select"><option value="all">全部分类</option></select>
+        </div>
+
+        <div class="toolbar" id="toolQuiz" style="display:none">
+          <select id="quizMode" class="select">
+            <option value="listen">🔊 听音选义</option>
+            <option value="see">🔤 看词选义</option>
+            <option value="spell">👂 听音选词</option>
+          </select>
+          <button class="btn" id="quizRestart">🔄 重新开始</button>
+        </div>
+
+        <div class="grid" id="list"></div>
+        <p class="muted center" id="empty" style="display:none">没有找到匹配的内容，换个关键词试试～</p>
+
+        <div class="panel" id="quizPanel" style="display:none; margin-top:22px">
+          <div class="center">
+            <button class="btn" id="qSpeak">🔊 听发音</button>
+            <span class="pill" id="qPrompt">点击发音开始</span>
+          </div>
+          <div class="quiz-word" id="qWord">—</div>
+          <div class="quiz-opts" id="qOpts"></div>
+          <div class="quiz-meta">
+            <span>本局得分：<b id="qScore">0</b></span>
+            <span>答对：<b id="qRight">0</b>/<b id="qTotal">0</b></span>
+            <span>最佳：<b id="qBest">0</b></span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer"><div class="container"><p>✨ 去练练计算？<a href="../math.html">口算闯关 →</a> ｜ <a href="../index.html">回到首页</a></p></div></footer>
+    </div>
+
+    <script src="../js/starfield.js"></script>
+    <script src="db.js"></script>
+    <script src="data/vocab.js"></script>
+    <script src="data/phrases.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

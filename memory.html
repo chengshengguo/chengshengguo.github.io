@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>记忆训练 · Mickey 星空学习站</title>
+    <meta name="description" content="翻牌配对记忆游戏：多难度训练观察力与记忆力。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .game-wrap { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-start; justify-content: center; }
+      .board-box { flex: 1 1 420px; min-width: 300px; }
+      #board { display: grid; gap: 10px; justify-content: center; }
+      .card { perspective: 600px; aspect-ratio: 1; cursor: pointer; }
+      .card-inner { position: relative; width: 100%; height: 100%; transition: transform .45s; transform-style: preserve-3d; }
+      .card.flipped .card-inner, .card.matched .card-inner { transform: rotateY(180deg); }
+      .face { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 14px; backface-visibility: hidden; font-size: clamp(1.4rem, 6vw, 2.4rem); border: 1px solid var(--border); }
+      .front { background: linear-gradient(135deg, #16224a, #0c1330); color: var(--accent-2); }
+      .back { background: linear-gradient(135deg, #1d3a5c, #122a44); transform: rotateY(180deg); }
+      .card.matched .back { background: linear-gradient(135deg, #14564a, #0e3a32); box-shadow: 0 0 16px rgba(25,195,163,.5); }
+      .side { width: 280px; min-width: 240px; }
+      .side .panel + .panel { margin-top: 18px; }
+      .mode-btns { display: flex; gap: 8px; }
+      .mode-btns .btn { flex: 1; justify-content: center; padding: 10px; font-size: .9rem; }
+      .mode-btns .btn.sel { background: linear-gradient(120deg, var(--accent), var(--accent-2)); border-color: transparent; }
+      .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: .95rem; }
+      .info-row span:first-child { color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="index.html">首页</a>
+          <a href="astronomy.html">天文科普</a>
+          <a href="solar-system.html">太阳系模型</a>
+          <a href="english/">🅰️ 英语</a>
+          <a href="math.html">➕ 口算</a>
+          <a href="chinese/">📜 语文</a>
+
+          <a href="gomoku.html">五子棋</a>
+          <a href="sudoku/">数独</a>
+          <a href="memory.html" class="active">记忆训练</a>
+          <a href="learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <span class="eyebrow">Memory</span>
+        <h1>🧠 记忆训练</h1>
+        <p>翻开两张牌，找到相同的配对。记住它们的位置，用最少的步数和最短的时间完成挑战！</p>
+      </header>
+
+      <section class="section container">
+        <div class="game-wrap">
+          <div class="board-box"><div id="board"></div></div>
+          <div class="side">
+            <div class="panel">
+              <div class="info-row"><span>用时</span><span id="timer">00:00</span></div>
+              <div class="info-row"><span>步数</span><span id="moves">0</span></div>
+              <div class="info-row"><span>最佳记录</span><span id="best">—</span></div>
+            </div>
+            <div class="panel">
+              <p class="muted" style="margin-top:0">难度</p>
+              <div class="mode-btns">
+                <button class="btn" data-diff="easy">简单</button>
+                <button class="btn sel" data-diff="medium">中等</button>
+                <button class="btn" data-diff="hard">困难</button>
+              </div>
+              <div class="flex" style="margin-top:14px">
+                <button class="btn btn-primary" id="restart">🔄 重新开始</button>
+              </div>
+            </div>
+            <div class="panel muted" style="font-size:.9rem">连续翻开两张，相同则保留，不同会翻回。挑战更短时间和更少步数！</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer"><div class="container"><p>✨ 还想玩点别的？<a href="gomoku.html">来一局五子棋 →</a></p></div></footer>
+    </div>
+
+    <script src="js/starfield.js"></script>
+    <script>
+      const EMOJI = ["🚀","🌟","🪐","🌍","🔥","🌈","🐱","🌸","⚡","🍎","🎈","🐬","🌙","🍔","🐼","🦄","🌻","⚽","🎲","🍉","🐧","🍩","⭐","🐢"];
+      const SIZE = { easy: [4, 3], medium: [4, 4], hard: [6, 4] };
+      const boardEl = document.getElementById("board");
+      let diff = "medium", cards = [], first = null, lock = false, moves = 0, matched = 0, total = 0, timer = 0, timerId = null;
+
+      function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+      function fmt(s) { return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
+      function bestKey() { return "memory-best-" + diff; }
+
+      function newGame() {
+        const [cols, rows] = SIZE[diff];
+        total = cols * rows;
+        const picks = shuffle(EMOJI.slice()).slice(0, total / 2);
+        cards = shuffle([...picks, ...picks]);
+        boardEl.style.gridTemplateColumns = `repeat(${cols}, minmax(0, ${Math.min(90, Math.floor(420 / cols))}px))`;
+        boardEl.innerHTML = "";
+        cards.forEach((e, i) => {
+          const card = document.createElement("div");
+          card.className = "card"; card.dataset.i = i; card.dataset.v = e;
+          card.innerHTML = `<div class="card-inner"><div class="face front">?</div><div class="face back">${e}</div></div>`;
+          card.onclick = () => flip(card);
+          boardEl.appendChild(card);
+        });
+        first = null; lock = false; moves = 0; matched = 0;
+        document.getElementById("moves").textContent = 0;
+        const b = localStorage.getItem(bestKey());
+        document.getElementById("best").textContent = b ? fmt(+b) : "—";
+        startTimer();
+      }
+
+      function flip(card) {
+        if (lock || card.classList.contains("flipped") || card.classList.contains("matched")) return;
+        card.classList.add("flipped");
+        if (!first) { first = card; return; }
+        moves++; document.getElementById("moves").textContent = moves;
+        if (first.dataset.v === card.dataset.v) {
+          first.classList.add("matched"); card.classList.add("matched");
+          first = null; matched += 2;
+          if (matched === total) win();
+        } else {
+          lock = true;
+          const a = first; first = null;
+          setTimeout(() => { a.classList.remove("flipped"); card.classList.remove("flipped"); lock = false; }, 750);
+        }
+      }
+
+      function win() {
+        stopTimer();
+        const prev = localStorage.getItem(bestKey());
+        if (!prev || timer < +prev) { localStorage.setItem(bestKey(), timer); document.getElementById("best").textContent = fmt(timer); }
+        setTimeout(() => alert("🎉 全部配对成功！用时 " + fmt(timer) + "，步数 " + moves), 300);
+      }
+
+      function startTimer() { stopTimer(); timer = 0; document.getElementById("timer").textContent = fmt(0); timerId = setInterval(() => { timer++; document.getElementById("timer").textContent = fmt(timer); }, 1000); }
+      function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
+
+      document.getElementById("restart").onclick = newGame;
+      document.querySelectorAll(".mode-btns .btn").forEach((b) => {
+        b.onclick = () => { document.querySelectorAll(".mode-btns .btn").forEach((x) => x.classList.remove("sel")); b.classList.add("sel"); diff = b.dataset.diff; newGame(); };
+      });
+
+      newGame();
+    </script>
+  </body>
+</html>

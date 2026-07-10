@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>数独 · Mickey 星空学习站</title>
+    <meta name="description" content="数独游戏：自动出题、唯一解校验、笔记、撤销重做、每日挑战，进度与最佳成绩存于浏览器本地数据库。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      .game-wrap { display: flex; gap: clamp(18px, 3vw, 34px); flex-wrap: wrap; align-items: flex-start; justify-content: center; }
+      .board-col { display: flex; flex-direction: column; gap: 14px; width: min(92vw, 540px); }
+      #grid {
+        width: 100%;
+        min-height: 280px; /* 兜底：防止 JS 未就绪时棋盘高度塌成 0，导致数字挤成一行 */
+        display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr);
+        background: var(--border); border: 3px solid var(--accent-2); border-radius: 12px;
+        overflow: hidden; gap: 0; box-shadow: var(--shadow); user-select: none; touch-action: manipulation;
+      }
+      .cell {
+        position: relative; display: grid; place-items: center;
+        background: #0e1730; color: var(--text);
+        font-size: clamp(1.05rem, 3.2vw, 1.85rem); font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.06); cursor: pointer; padding: 0; transition: background .12s;
+      }
+      .cell.given { background: #142046; color: var(--accent-3); font-weight: 800; cursor: default; }
+      .cell.bad { color: #ff7a7a; background: #2a1220; }
+      .cell.peer { background: #15224a; }
+      .cell.same { background: #1a2f63; }
+      .cell.sel { background: #1c2c5c; box-shadow: inset 0 0 0 2px var(--accent-2); z-index: 2; }
+      .cell.br { border-right: 2px solid var(--accent-2); }
+      .cell.bb { border-bottom: 2px solid var(--accent-2); }
+      .cell .pencil {
+        position: absolute; inset: 1px; display: grid; grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr); font-size: clamp(.46rem, 1.25vw, .74rem);
+        color: var(--muted); font-weight: 500; pointer-events: none;
+      }
+      .cell .pencil span { display: grid; place-items: center; line-height: 1; }
+
+      .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .numpad .num {
+        aspect-ratio: 1.35 / 1; font-size: clamp(1.3rem, 4vw, 1.9rem); font-weight: 700;
+        border-radius: 12px; border: 1px solid var(--border); background: var(--panel-strong);
+        color: var(--text); cursor: pointer; transition: .15s;
+      }
+      .numpad .num:hover { border-color: var(--border-glow); }
+      .numpad .num:active { transform: translateY(2px); background: var(--accent); }
+      .numpad .num.used { opacity: .35; }
+      .controls-row { display: flex; gap: 10px; margin-top: 4px; }
+      .controls-row .btn { flex: 1; justify-content: center; padding: 12px 6px; }
+
+      .side { width: 300px; min-width: 260px; flex: 1 1 260px; max-width: 360px; }
+      .side .panel + .panel { margin-top: 18px; }
+      .mode-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .mode-btns .btn { justify-content: center; padding: 10px; font-size: .9rem; }
+      .mode-btns .btn.sel { background: linear-gradient(120deg, var(--accent), var(--accent-2)); border-color: transparent; color: #fff; }
+      .info-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: .95rem; }
+      .info-row:last-child { border-bottom: none; }
+      .info-row span:first-child { color: var(--muted); }
+      .info-row b { font-size: 1.05rem; }
+      .stat-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+      .stat-table th, .stat-table td { padding: 6px 4px; text-align: left; border-bottom: 1px solid var(--border); }
+      .stat-table th { color: var(--muted); font-weight: 600; }
+      .stat-table td.best { color: var(--gold); font-weight: 700; text-align: right; }
+      .toast {
+        position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px);
+        background: rgba(14, 20, 48, .95); border: 1px solid var(--border-glow); color: var(--text);
+        padding: 12px 22px; border-radius: 999px; box-shadow: var(--shadow); opacity: 0; pointer-events: none;
+        transition: .35s; z-index: 60; font-size: .92rem;
+      }
+      .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+      .win-banner {
+        display: none; text-align: center; padding: 14px; border-radius: 14px;
+        background: linear-gradient(120deg, rgba(14,124,102,.35), rgba(25,195,163,.2));
+        border: 1px solid var(--border-glow); font-weight: 700;
+      }
+      .win-banner.show { display: block; }
+      .busy { opacity: .5; pointer-events: none; }
+      /* 窄屏：侧栏整宽置于棋盘下方 */
+      @media (max-width: 860px) { .side { max-width: none; } }
+      /* iPad 横屏：放大棋盘列 */
+      @media (min-width: 980px) { .board-col { width: min(60vw, 560px); } }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="../index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="../index.html">首页</a>
+          <a href="../astronomy.html">天文科普</a>
+          <a href="../solar-system.html">太阳系模型</a>
+          <a href="../english/">🅰️ 英语</a>
+          <a href="../math.html">➕ 口算</a>
+          <a href="../chinese/">📜 语文</a>
+          <a href="../gomoku.html">五子棋</a>
+          <a href="../sudoku/" class="active">数独</a>
+          <a href="../memory.html">记忆训练</a>
+          <a href="../learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <span class="eyebrow">Sudoku</span>
+        <h1>🔢 数独</h1>
+        <p>每行、每列、每个 3×3 宫都要填入 1–9 且不重复。点格子后用下方数字键盘输入，开启笔记模式可记候选数。成绩与进度自动存进浏览器本地数据库。</p>
+      </header>
+
+      <section class="section container">
+        <div class="game-wrap">
+          <div class="board-col">
+            <div id="grid" aria-label="数独棋盘"></div>
+            <div class="win-banner" id="winBanner"></div>
+            <div class="numpad" id="numpad"></div>
+            <div class="controls-row">
+              <button class="btn" id="pencil">✏️ 笔记</button>
+              <button class="btn" id="erase">⌫ 擦除</button>
+              <button class="btn" id="undo">↩ 撤销</button>
+              <button class="btn" id="redo">↪ 重做</button>
+            </div>
+          </div>
+
+          <div class="side">
+            <div class="panel">
+              <div class="info-row"><span>难度</span><b id="diffLabel">中等</b></div>
+              <div class="info-row"><span>用时</span><b id="timer">00:00</b></div>
+              <div class="info-row"><span>提示剩余</span><b id="hints">3</b></div>
+              <div class="info-row"><span>错误数</span><b id="mistakes">0</b></div>
+            </div>
+
+            <div class="panel">
+              <div class="mode-btns">
+                <button class="btn" data-diff="easy">简单</button>
+                <button class="btn sel" data-diff="medium">中等</button>
+                <button class="btn" data-diff="hard">困难</button>
+                <button class="btn" data-diff="expert">专家</button>
+              </div>
+              <div class="controls-row" style="margin-top:14px">
+                <button class="btn btn-primary" id="new">🔄 新游戏</button>
+                <button class="btn" id="pause">⏸ 暂停</button>
+              </div>
+              <div class="controls-row">
+                <button class="btn" id="hint">💡 提示</button>
+                <button class="btn" id="check">✅ 检查</button>
+                <button class="btn" id="daily">📅 每日</button>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3 style="margin:0 0 10px; font-size:1.05rem">🏆 最佳成绩</h3>
+              <table class="stat-table">
+                <thead><tr><th>难度</th><th style="text-align:right">最佳</th><th style="text-align:right">胜/局</th></tr></thead>
+                <tbody id="statBody"></tbody>
+              </table>
+            </div>
+
+            <div class="panel muted" style="font-size:.88rem; line-height:1.6">
+              · 点格子后输入数字；冲突会标红。<br />
+              · 笔记模式：记录候选数，再点一次该数字可消除。<br />
+              · 支持键盘方向键移动、1–9 填数、Backspace 擦除、Ctrl+Z 撤销。<br />
+              · 进度自动保存，刷新可继续上局。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer"><div class="container"><p>✨ 想放松一下？<a href="../memory.html">去玩记忆训练 →</a></p></div></footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- 浏览器端 SQLite 封装（sql.js WASM + IndexedDB 持久化），内联以让数独成为单文件 -->
+    <script>
+      window.DB = (function () {
+        const CDN = "https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/";
+        const IDB_NAME = "mickey_study_db";
+        const STORE = "sqlite_files";
+        let SQL = null, db = null, key = "db", ok = false;
+
+        function loadScript(src) {
+          return new Promise((res, rej) => {
+            const s = document.createElement("script");
+            s.src = src; s.onload = res;
+            s.onerror = () => rej(new Error("无法加载 " + src));
+            document.head.appendChild(s);
+          });
+        }
+        function idbReq(k, write, val) {
+          return new Promise((res, rej) => {
+            const r = indexedDB.open(IDB_NAME, 1);
+            r.onupgradeneeded = (e) => e.target.result.createObjectStore(STORE);
+            r.onsuccess = () => {
+              const idb = r.result;
+              const tx = idb.transaction(STORE, write ? "readwrite" : "readonly").objectStore(STORE);
+              const op = write ? tx.put(val, k) : tx.get(k);
+              op.onsuccess = () => res(write ? undefined : op.result);
+              op.onerror = () => rej(op.error);
+            };
+            r.onerror = () => rej(r.error);
+          });
+        }
+        const idbGet = (k) => idbReq(k, false);
+        const idbPut = (k, v) => idbReq(k, true, v);
+
+        async function init(opts) {
+          key = opts.key || "db";
+          try {
+            if (!window.initSqlJs) await loadScript(CDN + "sql-wasm.js");
+            if (!SQL) SQL = await window.initSqlJs({ locateFile: (f) => CDN + f });
+            const cached = await idbGet(key);
+            if (cached) {
+              db = new SQL.Database(cached);
+            } else {
+              db = new SQL.Database();
+              opts.build(db);
+              await idbPut(key, db.export());
+            }
+            ok = true;
+          } catch (e) {
+            console.warn("SQLite 不可用，进入无持久化降级模式：", e);
+            ok = false; db = null;
+          }
+          return ok;
+        }
+        function all(sql, params) {
+          if (!db) return [];
+          const stmt = db.prepare(sql);
+          if (params) stmt.bind(params);
+          const cols = stmt.getColumnNames();
+          const rows = [];
+          while (stmt.step()) {
+            const r = stmt.get();
+            const o = {};
+            cols.forEach((c, i) => (o[c] = r[i]));
+            rows.push(o);
+          }
+          stmt.free();
+          return rows;
+        }
+        function run(sql, params) {
+          if (!db) return;
+          const stmt = db.prepare(sql);
+          if (params) stmt.bind(params);
+          stmt.step();
+          stmt.free();
+        }
+        function save() {
+          if (!db) return;
+          try { idbPut(key, db.export()); } catch (e) { /* 忽略写入错误 */ }
+        }
+        return { init, all, run, save, get ok() { return ok; } };
+      })();
+    </script>
+
+    <script src="../js/starfield.js"></script>
+    <script>
+      "use strict";
+      // ====== 难度配置 ======
+      const DIFFS = {
+        easy:   { label: "简单", givens: 45 },
+        medium: { label: "中等", givens: 36 },
+        hard:   { label: "困难", givens: 30 },
+        expert: { label: "专家", givens: 26 },
+      };
+
+      // ====== 生成算法 ======
+      function shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+        return a;
+      }
+      function valid(b, r, c, v) {
+        for (let i = 0; i < 9; i++) if (b[r][i] === v || b[i][c] === v) return false;
+        const br = r - (r % 3), bc = c - (c % 3);
+        for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) if (b[br + i][bc + j] === v) return false;
+        return true;
+      }
+      function fill(b, r, c) {
+        if (r === 9) return true;
+        if (c === 9) return fill(b, r + 1, 0);
+        if (b[r][c]) return fill(b, r, c + 1);
+        for (const v of shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9])) {
+          if (valid(b, r, c, v)) { b[r][c] = v; if (fill(b, r, c + 1)) return true; b[r][c] = 0; }
+        }
+        return false;
+      }
+      function generateSolved() {
+        const b = Array.from({ length: 9 }, () => Array(9).fill(0));
+        fill(b, 0, 0);
+        return b;
+      }
+      function candidatesFor(b, r, c) {
+        const used = new Set();
+        for (let i = 0; i < 9; i++) { if (b[r][i]) used.add(b[r][i]); if (b[i][c]) used.add(b[i][c]); }
+        const br = r - (r % 3), bc = c - (c % 3);
+        for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) if (b[br + i][bc + j]) used.add(b[br + i][bc + j]);
+        const out = [];
+        for (let v = 1; v <= 9; v++) if (!used.has(v)) out.push(v);
+        return out;
+      }
+      // 统计解的数量（最多到 limit，用于唯一解判定）
+      function countSolutions(board, limit) {
+        const b = board.map((r) => r.slice());
+        let count = 0;
+        function findEmpty() {
+          let best = null, bestN = 10;
+          for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) {
+            if (b[r][c] === 0) { const cs = candidatesFor(b, r, c); if (cs.length < bestN) { bestN = cs.length; best = [r, c, cs]; if (bestN === 0) return best; } }
+          }
+          return best;
+        }
+        function rec() {
+          if (count >= limit) return;
+          const cell = findEmpty();
+          if (!cell) { count++; return; }
+          const [r, c, cs] = cell;
+          if (cs.length === 0) return;
+          for (const v of cs) { b[r][c] = v; rec(); b[r][c] = 0; if (count >= limit) return; }
+        }
+        rec();
+        return count;
+      }
+      function makePuzzle(givens) {
+        const sol = generateSolved();
+        const puzzle = sol.map((r) => r.slice());
+        const positions = shuffle([...Array(81).keys()]);
+        let remain = 81;
+        for (const pos of positions) {
+          if (remain <= givens) break;
+          const r = Math.floor(pos / 9), c = pos % 9;
+          if (puzzle[r][c] === 0) continue;
+          const mr = 8 - r, mc = 8 - c, bak = puzzle[r][c], mbak = puzzle[mr][mc];
+          puzzle[r][c] = 0; puzzle[mr][mc] = 0;
+          if (countSolutions(puzzle, 2) !== 1) { puzzle[r][c] = bak; puzzle[mr][mc] = mbak; }
+          else remain -= (bak ? 1 : 0) + (mbak ? 1 : 0);
+        }
+        return { puzzle, sol };
+      }
+      // 每日挑战：按日期播种，保证当天一致
+      function mulberry32(seed) {
+        return function () {
+          seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      function makeDailyPuzzle(dateKey) {
+        let h = 0; for (const ch of dateKey) h = (h * 31 + ch.charCodeAt(0)) | 0;
+        const rnd = mulberry32(h);
+        const oldRandom = Math.random;
+        Math.random = rnd; // 临时替换随机源，使生成可复现
+        try { return makePuzzle(30); } finally { Math.random = oldRandom; }
+      }
+
+      // ====== 状态 ======
+      let solution = [], given = [], values = [], pencils = [], diff = "medium";
+      let sel = null, hintsLeft = 3, mistakes = 0, pencilMode = false;
+      let elapsed = 0, timerId = null, running = false, finished = false;
+      let history = [], future = [], saveTimer = null;
+
+      const gridEl = document.getElementById("grid");
+      const numpadEl = document.getElementById("numpad");
+
+      // 关键修复：把棋盘高度无条件设为宽度（正方形）。
+      // 旧版依赖此逻辑但在某些时机 clientWidth 为 0，导致高度塌成 0、数字挤成一行。
+      function sizeBoard() {
+        const w = gridEl.clientWidth;
+        if (w > 0) gridEl.style.height = w + "px";
+      }
+
+      // ====== 渲染 ======
+      function buildBoard() {
+        gridEl.innerHTML = "";
+        for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) {
+          const d = document.createElement("div");
+          d.className = "cell";
+          if (c === 2 || c === 5) d.classList.add("br");
+          if (r === 2 || r === 5) d.classList.add("bb");
+          d.dataset.i = r * 9 + c;
+          d.addEventListener("click", () => selectCell(r * 9 + c));
+          gridEl.appendChild(d);
+        }
+        sizeBoard();
+        numpadEl.innerHTML = "";
+        for (let n = 1; n <= 9; n++) {
+          const b = document.createElement("button");
+          b.className = "num"; b.textContent = n; b.dataset.n = n;
+          b.addEventListener("click", () => inputDigit(n));
+          numpadEl.appendChild(b);
+        }
+      }
+      function cellEl(i) { return gridEl.children[i]; }
+
+      function computeBad() {
+        const bad = new Array(81).fill(false);
+        const mark = (cells) => {
+          const seen = {};
+          cells.forEach((i) => { const v = values[i]; if (v) { if (seen[v] !== undefined) { bad[i] = true; bad[seen[v]] = true; } else seen[v] = i; } });
+        };
+        for (let i = 0; i < 9; i++) {
+          mark([...Array(9)].map((_, j) => i * 9 + j));
+          mark([...Array(9)].map((_, j) => j * 9 + i));
+        }
+        for (let br = 0; br < 9; br += 3) for (let bc = 0; bc < 9; bc += 3) {
+          const cs = []; for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) cs.push((br + i) * 9 + (bc + j)); mark(cs);
+        }
+        return bad;
+      }
+
+      function paint() {
+        const bad = computeBad();
+        const selVal = sel != null ? values[sel] : 0;
+        for (let i = 0; i < 81; i++) {
+          const el = cellEl(i);
+          const v = values[i];
+          el.classList.toggle("given", given[i]);
+          el.classList.toggle("bad", bad[i] && !given[i]);
+          el.classList.toggle("sel", i === sel);
+          let peer = false, same = false;
+          if (sel != null && i !== sel) {
+            const sr = Math.floor(sel / 9), sc = sel % 9, r = Math.floor(i / 9), c = i % 9;
+            if (sr === r || sc === c || (Math.floor(sr / 3) === Math.floor(r / 3) && Math.floor(sc / 3) === Math.floor(c / 3))) peer = true;
+            if (selVal && v === selVal) same = true;
+          }
+          el.classList.toggle("peer", peer && !same);
+          el.classList.toggle("same", same);
+          if (v) {
+            el.textContent = v;
+            const pc = el.querySelector(".pencil"); if (pc) pc.remove();
+          } else if (pencils[i].size) {
+            let pc = el.querySelector(".pencil");
+            if (!pc) { pc = document.createElement("div"); pc.className = "pencil"; el.appendChild(pc); }
+            pc.innerHTML = "";
+            for (let n = 1; n <= 9; n++) { const s = document.createElement("span"); s.textContent = pencils[i].has(n) ? n : ""; pc.appendChild(s); }
+          } else {
+            el.textContent = "";
+            const pc = el.querySelector(".pencil"); if (pc) pc.remove();
+          }
+        }
+        const counts = new Array(10).fill(0);
+        for (let i = 0; i < 81; i++) if (values[i]) counts[values[i]]++;
+        numpadEl.querySelectorAll(".num").forEach((b) => {
+          b.classList.toggle("used", counts[+b.dataset.n] >= 9);
+        });
+        document.getElementById("mistakes").textContent = mistakes;
+      }
+
+      // ====== 交互 ======
+      function selectCell(i) {
+        if (finished) return;
+        sel = i;
+        if (!running && !finished) startTimer();
+        paint();
+      }
+      function snapshot() { return { values: values.slice(), pencils: pencils.map((s) => [...s]), mistakes }; }
+      function inputDigit(n) {
+        if (sel == null || finished || given[sel]) return;
+        if (pencilMode && !values[sel]) {
+          history.push(snapshot()); future = [];
+          if (pencils[sel].has(n)) pencils[sel].delete(n); else pencils[sel].add(n);
+          paint(); scheduleSave(); return;
+        }
+        if (values[sel] === n) return;
+        history.push(snapshot()); future = [];
+        const prev = values[sel];
+        values[sel] = n;
+        if (n !== solution[sel] && prev !== solution[sel]) mistakes++;
+        pencils[sel].clear();
+        paint();
+        checkWin();
+        scheduleSave();
+      }
+      function eraseCell() {
+        if (sel == null || finished || given[sel]) return;
+        if (values[sel] === 0 && pencils[sel].size === 0) return;
+        history.push(snapshot()); future = [];
+        values[sel] = 0; pencils[sel].clear();
+        paint(); scheduleSave();
+      }
+      function undo() {
+        if (!history.length) return;
+        future.push(snapshot());
+        const s = history.pop();
+        values = s.values.slice(); pencils = s.pencils.map((a) => new Set(a)); mistakes = s.mistakes;
+        paint(); scheduleSave();
+      }
+      function redo() {
+        if (!future.length) return;
+        history.push(snapshot());
+        const s = future.pop();
+        values = s.values.slice(); pencils = s.pencils.map((a) => new Set(a)); mistakes = s.mistakes;
+        paint(); scheduleSave();
+      }
+      function togglePencil() {
+        pencilMode = !pencilMode;
+        document.getElementById("pencil").classList.toggle("sel", pencilMode);
+      }
+
+      // ====== 计时 ======
+      function fmt(s) { return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
+      function startTimer() { if (running || finished) return; running = true; timerId = setInterval(() => { elapsed++; document.getElementById("timer").textContent = fmt(elapsed); }, 1000); }
+      function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; running = false; }
+      function pauseToggle() {
+        if (finished) return;
+        const btn = document.getElementById("pause");
+        if (running) { stopTimer(); btn.textContent = "▶ 继续"; toast("已暂停"); }
+        else { startTimer(); btn.textContent = "⏸ 暂停"; }
+      }
+
+      // ====== 提示 / 检查 / 胜利 ======
+      document.getElementById("hint").onclick = () => {
+        if (finished || hintsLeft <= 0) { if (hintsLeft <= 0) toast("提示已用尽"); return; }
+        const empties = [];
+        for (let i = 0; i < 81; i++) if (!given[i] && values[i] !== solution[i]) empties.push(i);
+        if (!empties.length) return;
+        const i = empties[Math.floor(Math.random() * empties.length)];
+        history.push(snapshot()); future = [];
+        values[i] = solution[i]; pencils[i].clear();
+        if (sel == null) sel = i;
+        hintsLeft--; document.getElementById("hints").textContent = hintsLeft;
+        paint(); checkWin(); scheduleSave();
+      };
+      document.getElementById("check").onclick = () => {
+        let wrong = 0;
+        for (let i = 0; i < 81; i++) if (!given[i] && values[i] && values[i] !== solution[i]) wrong++;
+        if (wrong) toast("有 " + wrong + " 处与正确答案不符（已标红）");
+        else if (values.every((v) => v)) toast("全部正确，恭喜通关！🎉");
+        else toast("目前填的都正确，还有空格没填哦");
+        paint();
+      };
+      function checkWin() {
+        if (finished) return;
+        if (!values.every((v) => v)) return;
+        if (values.some((v, i) => v !== solution[i])) return;
+        finished = true; stopTimer();
+        document.getElementById("diffLabel").textContent = (DIFFS[diff] ? DIFFS[diff].label : "每日") + " 🎉";
+        const banner = document.getElementById("winBanner");
+        banner.textContent = "🎉 恭喜完成！用时 " + fmt(elapsed) + (mistakes ? "，错误 " + mistakes + " 次" : "，零错误！");
+        banner.classList.add("show");
+        onWin();
+      }
+
+      // ====== 数据库（成绩/统计/进度） ======
+      function buildSchema(db) {
+        db.run("CREATE TABLE IF NOT EXISTS records(id INTEGER PRIMARY KEY AUTOINCREMENT, diff TEXT, time INTEGER, mistakes INTEGER, date TEXT)");
+        db.run("CREATE TABLE IF NOT EXISTS stats(diff TEXT PRIMARY KEY, won INTEGER DEFAULT 0, played INTEGER DEFAULT 0, best INTEGER)");
+        db.run("CREATE TABLE IF NOT EXISTS progress(id INTEGER PRIMARY KEY CHECK(id=1), data TEXT, ts INTEGER)");
+        db.run("CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY, v TEXT)");
+      }
+      function onWin() {
+        if (!DB.ok) { toast("通关！(本地数据库未启用，成绩未保存)"); return; }
+        DB.run("INSERT INTO records(diff,time,mistakes,date) VALUES(?,?,?,?)", [diff, elapsed, mistakes, new Date().toISOString().slice(0, 10)]);
+        DB.run("INSERT INTO stats(diff,won,played,best) VALUES(?,1,1,?) ON CONFLICT(diff) DO UPDATE SET won=won+1, played=played+1, best=CASE WHEN best IS NULL OR ?<best THEN ? ELSE best END", [diff, elapsed, elapsed, elapsed]);
+        DB.run("DELETE FROM progress WHERE id=1");
+        DB.save();
+        refreshStats();
+        toast("成绩已保存到本地数据库 🏆");
+      }
+      function refreshStats() {
+        const body = document.getElementById("statBody");
+        if (!DB.ok) { body.innerHTML = '<tr><td colspan="3" class="muted">本地数据库不可用</td></tr>'; return; }
+        const rows = DB.all("SELECT diff, won, played, best FROM stats");
+        const map = {}; rows.forEach((r) => (map[r.diff] = r));
+        body.innerHTML = "";
+        ["easy", "medium", "hard", "expert"].forEach((d) => {
+          const r = map[d];
+          const tr = document.createElement("tr");
+          tr.innerHTML = '<td>' + DIFFS[d].label + '</td><td class="best">' + (r && r.best != null ? fmt(r.best) : "—") + '</td><td style="text-align:right">' + (r ? r.won + "/" + r.played : "0/0") + "</td>";
+          body.appendChild(tr);
+        });
+      }
+      function saveProgress() {
+        if (!DB.ok || finished) return;
+        const data = JSON.stringify({ diff, solution, given, values, pencils: pencils.map((s) => [...s]), hintsLeft, mistakes, elapsed });
+        DB.run("INSERT OR REPLACE INTO progress(id,data,ts) VALUES(1,?,?)", [data, Date.now()]);
+        DB.save();
+      }
+      function scheduleSave() { if (saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(saveProgress, 600); }
+      function loadProgress() {
+        if (!DB.ok) return false;
+        const rows = DB.all("SELECT data FROM progress WHERE id=1");
+        if (!rows.length) return false;
+        try {
+          const d = JSON.parse(rows[0].data);
+          diff = d.diff; solution = d.solution; given = d.given; values = d.values;
+          pencils = d.pencils.map((a) => new Set(a)); hintsLeft = d.hintsLeft; mistakes = d.mistakes; elapsed = d.elapsed || 0;
+          return true;
+        } catch (e) { return false; }
+      }
+
+      // ====== 新游戏 ======
+      function newGame(opts) {
+        opts = opts || {};
+        finished = false; mistakes = 0; elapsed = 0; hintsLeft = 3; sel = null;
+        history = []; future = []; pencilMode = false;
+        document.getElementById("pencil").classList.remove("sel");
+        document.getElementById("pause").textContent = "⏸ 暂停";
+        document.getElementById("winBanner").classList.remove("show");
+        document.getElementById("timer").textContent = "00:00";
+        document.getElementById("hints").textContent = hintsLeft;
+        document.getElementById("diffLabel").textContent = opts.daily ? "每日" : DIFFS[diff].label;
+        stopTimer();
+
+        if (opts.daily) {
+          const key = "daily_" + new Date().toISOString().slice(0, 10);
+          let p = null;
+          if (DB.ok) { const m = DB.all("SELECT v FROM meta WHERE k=?", [key]); if (m.length) p = JSON.parse(m[0].v); }
+          if (!p) {
+            setBusy(true);
+            setTimeout(() => {
+              p = makeDailyPuzzle(key.slice(6));
+              if (DB.ok) { DB.run("INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)", [key, JSON.stringify(p)]); DB.save(); }
+              applyPuzzle(p); setBusy(false); startTimer(); toast("每日挑战已生成 📅"); scheduleSave();
+            }, 30);
+            return;
+          }
+          applyPuzzle(p); startTimer(); toast("每日挑战已加载 📅"); scheduleSave(); return;
+        }
+
+        const res = makePuzzle(DIFFS[diff].givens);
+        applyPuzzle(res);
+        startTimer();
+        scheduleSave();
+      }
+      function applyPuzzle(res) {
+        solution = res.sol.map((r) => r.slice());
+        given = res.puzzle.map((r) => r.map((v) => v !== 0));
+        values = res.puzzle.map((r) => r.slice());
+        pencils = Array.from({ length: 81 }, () => new Set());
+        paint();
+      }
+      function setBusy(b) { document.querySelector(".board-col").classList.toggle("busy", b); }
+
+      function toast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg; t.classList.add("show");
+        clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 2200);
+      }
+
+      // ====== 事件绑定 ======
+      document.querySelectorAll(".mode-btns .btn").forEach((b) => {
+        b.onclick = () => {
+          document.querySelectorAll(".mode-btns .btn").forEach((x) => x.classList.remove("sel"));
+          b.classList.add("sel"); diff = b.dataset.diff;
+          document.getElementById("diffLabel").textContent = DIFFS[diff].label;
+          newGame();
+        };
+      });
+      document.getElementById("new").onclick = () => newGame();
+      document.getElementById("pause").onclick = pauseToggle;
+      document.getElementById("pencil").onclick = togglePencil;
+      document.getElementById("erase").onclick = eraseCell;
+      document.getElementById("undo").onclick = undo;
+      document.getElementById("redo").onclick = redo;
+      document.getElementById("daily").onclick = () => newGame({ daily: true });
+
+      // 物理键盘
+      document.addEventListener("keydown", (e) => {
+        if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); undo(); return; }
+        if (e.key >= "1" && e.key <= "9") { inputDigit(+e.key); return; }
+        if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") { eraseCell(); return; }
+        if (sel == null) return;
+        const r = Math.floor(sel / 9), c = sel % 9;
+        if (e.key === "ArrowUp" && r > 0) selectCell(sel - 9);
+        else if (e.key === "ArrowDown" && r < 8) selectCell(sel + 9);
+        else if (e.key === "ArrowLeft" && c > 0) selectCell(sel - 1);
+        else if (e.key === "ArrowRight" && c < 8) selectCell(sel + 1);
+      });
+
+      // ====== 启动 ======
+      buildBoard();
+      window.addEventListener("resize", sizeBoard);
+      window.addEventListener("orientationchange", () => setTimeout(sizeBoard, 200));
+      if (window.ResizeObserver) new ResizeObserver(sizeBoard).observe(document.querySelector(".board-col"));
+      requestAnimationFrame(sizeBoard); // 首帧后再校正一次，避免初始布局高度不准
+      (async function init() {
+        await DB.init({ key: "sudoku", build: buildSchema });
+        refreshStats();
+        if (loadProgress()) {
+          document.getElementById("diffLabel").textContent = (DIFFS[diff] ? DIFFS[diff].label : "每日");
+          document.getElementById("hints").textContent = hintsLeft;
+          document.getElementById("timer").textContent = fmt(elapsed);
+          paint();
+          sizeBoard();
+          toast("已恢复上次进度，点任意格继续 ⏯");
+        } else {
+          newGame();
+        }
+      })();
+    </script>
+  </body>
+</html>

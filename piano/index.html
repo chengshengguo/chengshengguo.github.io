@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0e7c66" />
+    <title>🎹 钢琴小宇宙 · Mickey 星空学习站</title>
+    <meta name="description" content="Mickey 的钢琴学习站：教材知识点百科、进阶路线图，以及按曲目整理、可用时间轴回看每一次练习视频的成长历程。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="piano.css" />
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <!-- 导航 -->
+      <nav class="navbar">
+        <a class="brand" href="../index.html">
+          <span class="logo">🚀</span>
+          <span>Mickey 星空学习站</span>
+        </a>
+        <div class="nav-links">
+          <a href="../index.html">首页</a>
+          <a href="../astronomy.html">天文科普</a>
+          <a href="../solar-system.html">太阳系模型</a>
+          <a href="../gomoku.html">五子棋</a>
+          <a href="../sudoku/">数独</a>
+          <a href="../memory.html">记忆训练</a>
+          <a href="../english/">🅰️ 英语</a>
+          <a href="../math.html">➕ 口算</a>
+          <a href="../chinese/">📜 语文</a>
+          <a href="../learn_plan/index.html">📅 暑假计划</a>
+          <a href="index.html" class="active">🎹 钢琴</a>
+        </div>
+      </nav>
+
+      <!-- Hero -->
+      <header class="hero container">
+        <span class="eyebrow">Piano Journey · 学琴 2 年+</span>
+        <h1>🎹 钢琴小宇宙</h1>
+        <p class="lead">
+          从《小汤》的第一颗中央 C，到《车尔尼》《哈农》的指尖功夫，再到能完整弹下
+          《穿越时空的思念》《千与千寻》——这是 Mickey 的学琴地图与成长记录。
+        </p>
+        <div class="piano-keys" aria-hidden="true">
+          <span class="wk"></span><span class="bk"></span><span class="wk"></span>
+          <span class="wk"></span><span class="bk"></span><span class="wk"></span>
+          <span class="bk"></span><span class="wk"></span><span class="wk"></span>
+          <span class="bk"></span><span class="wk"></span><span class="bk"></span>
+          <span class="wk"></span><span class="wk"></span><span class="bk"></span>
+          <span class="wk"></span>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#roadmap">🗺️ 看学习路线</a>
+          <a class="btn" href="#journey">🎬 看成长视频</a>
+          <a class="btn" href="knowledge.html">📖 教材知识点</a>
+        </div>
+      </header>
+
+      <!-- 另一个 AI 版本（小小钢琴家 · 暑假学习专题） -->
+      <section class="section container" style="padding-top: 0">
+        <a class="card" href="v2/" style="flex-direction: row; align-items: center; justify-content: space-between; gap: 16px">
+          <div class="flex" style="gap: 18px; align-items: center">
+            <div class="icon">✨</div>
+            <div>
+              <h3 style="margin: 0">小小钢琴家 · 暑假学习专题（另一个版本）</h3>
+              <p style="margin: 4px 0 0">教材库 · 进阶路线图 · 术语图解 · 虚拟键盘 · 自查小测验 · 琴边速查卡，做得非常精致，推荐一看。</p>
+            </div>
+          </div>
+          <span class="more">打开看看 →</span>
+        </a>
+      </section>
+
+      <!-- 数据速览 -->
+      <section class="section container" style="padding-top: 0">
+        <div class="grid" id="statGrid">
+          <div class="card">
+            <div class="icon">📚</div>
+            <h3>教材体系</h3>
+            <p>汤普森 · 车尔尼 · 哈农 · 巴赫 · 奏鸣曲，成体系进阶。</p>
+          </div>
+          <div class="card">
+            <div class="icon">🎼</div>
+            <h3 id="pieceCount">曲目专题</h3>
+            <p id="pieceDesc">每首曲子一条成长时间轴，点日期看当天演奏。</p>
+          </div>
+          <div class="card">
+            <div class="icon">🎥</div>
+            <h3 id="videoCount">练习视频</h3>
+            <p>按 YYYYMMDD 命名，记录每一次进步。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 学习路线图 -->
+      <section class="section container" id="roadmap">
+        <div class="section-head">
+          <h2>🗺️ 一条典型进阶路线图</h2>
+          <p>从启蒙到音乐会级技术储备。每一站都不是"非走完不可"，老师会根据进度跳或补。</p>
+        </div>
+        <div class="roadmap" id="roadmapList"></div>
+      </section>
+
+      <!-- 学习历程 / 视频时间轴（以曲目为主线） -->
+      <section class="section container" id="journey">
+        <div class="section-head">
+          <h2>🎬 学习历程 · 按曲目回看成长</h2>
+          <p>每一首曲子是一条时间轴：不同日期反复打磨，点下方日期节点，回看当天的演奏视频，感受变化。</p>
+        </div>
+        <div id="journeyList"></div>
+      </section>
+
+      <!-- 教材知识点入口 -->
+      <section class="section container">
+        <div class="section-head">
+          <h2>📖 教材知识点百科</h2>
+          <p>每本教材"谁写的 / 练什么 / 什么时候用 / 小贴士"，给小朋友复习、家长陪练都能用。</p>
+        </div>
+        <div class="grid" id="kbGrid"></div>
+      </section>
+
+      <footer class="footer">
+        <div class="container">
+          <p>✨ Mickey 星空学习站 · 钢琴小宇宙</p>
+          <p class="muted">本站为静态页面，无需联网即可使用（字体等可联网加载更佳）。</p>
+        </div>
+      </footer>
+    </div>
+
+    <script src="../js/starfield.js"></script>
+    <script src="data.js"></script>
+    <script>
+      const pieces = window.PIANO_PIECES || [];
+
+      // 格式化 20260410 -> 2026-04-10
+      function fmt(d) {
+        return d.replace(/^(\d{4})(\d{2})(\d{2})$/, "$1-$2-$3");
+      }
+
+      // ===== 顶部统计 =====
+      const totalVideos = pieces.reduce((s, p) => s + p.videos.length, 0);
+      document.getElementById("pieceCount").textContent = pieces.length + " 个曲目专题";
+      document.getElementById("videoCount").textContent = totalVideos + " 段练习视频";
+      document.getElementById("pieceDesc").textContent =
+        "每首曲子一条成长时间轴，点日期看当天演奏。";
+
+      // ===== 学习路线图 =====
+      const roadmap = [
+        { icon: "🟢", lvl: "启蒙", title: "小汤 1–5", goal: "目标：认识钢琴，建立手型与识谱地基",
+          desc: "零基础起步，图文多、进度慢。认中央 C、五指位、基本音符与连/断奏，每册结尾的书写与技巧页别跳过。",
+          books: ["小汤 1–5"] },
+        { icon: "🔵", lvl: "过渡", title: "大汤 1–2", goal: "目标：接触古典小品，开始音阶 / 和弦 / 踏板",
+          desc: "按音乐史顺序串小品，第一册就讲音阶指法、和弦转位、十六分音符与踏板。比小汤进度快。",
+          books: ["大汤 1–2"] },
+        { icon: "🤲", lvl: "基本功", title: "哈农 + 车尔尼 599", goal: "目标：手指独立性 + 初步技巧综合运用",
+          desc: "哈农每天 10–15 分钟热身（慢练→原速→变节奏）；599 挑号弹，注意拇指穿指与升降号。",
+          books: ["哈农 1–20", "车尔尼 599"] },
+        { icon: "🌊", lvl: "流畅", title: "大汤 3 + 车尔尼 849", goal: "目标：跑动“流起来”，乐句连贯、速度恒定",
+          desc: "849 训练左右手快速音阶/琶音交替与阿尔贝蒂低音，♩=100 以上才算过。可同步加巴赫初级钢琴曲集。",
+          books: ["大汤 3", "车尔尼 849", "巴赫初级"] },
+        { icon: "⚡", lvl: "快速", title: "大汤 4–5 + 车尔尼 299", goal: "目标：手指独立性 + 颗粒性 + 速度",
+          desc: "299 含八度、重复音、跨越大跳与复节奏，是业余考级 8–10 级的分水岭，很多孩子卡在这儿。",
+          books: ["大汤 4–5", "车尔尼 299"] },
+        { icon: "🔥", lvl: "灵巧", title: "车尔尼 740", goal: "目标：音乐会级技术储备",
+          desc: "双音音阶、三度六度平行、八度断奏、快速琶音与装饰音炫技。弹完可接肖邦练习曲 Op.10/25。",
+          books: ["车尔尼 740"] },
+        { icon: "🎼", lvl: "艺术表达", title: "乐曲文献", goal: "目标：从“技术”走向“音乐”",
+          desc: "巴赫创意曲、小奏鸣曲（克列门蒂/库劳）、布格缪勒 100、肖邦、李斯特……在作品中表达情感与风格。",
+          books: ["巴赫", "小奏鸣曲", "肖邦 / 李斯特"] },
+      ];
+      const rl = document.getElementById("roadmapList");
+      roadmap.forEach((s) => {
+        const el = document.createElement("div");
+        el.className = "stage";
+        el.innerHTML = `
+          <div class="node">${s.icon}</div>
+          <div class="stage-body">
+            <h3>${s.title}<span class="lvl">${s.lvl}</span></h3>
+            <div class="goal">${s.goal}</div>
+            <p>${s.desc}</p>
+            <div class="books">${s.books.map((b) => `<span class="pill">${b}</span>`).join("")}</div>
+          </div>`;
+        rl.appendChild(el);
+      });
+
+      // ===== 教材知识点卡片 =====
+      const kb = [
+        { icon: "🟢", title: "小汤（简易钢琴教程）", desc: "零基础启蒙 1–8 册，识谱与手型的地基。", href: "knowledge.html#xiaotang" },
+        { icon: "🔵", title: "大汤（现代钢琴教程）", desc: "按音乐史串古典小品，进度更快。", href: "knowledge.html#datang" },
+        { icon: "🟤", title: "车尔尼系列", desc: "599 / 849 / 299 / 740，从初步到灵巧。", href: "knowledge.html#czerny" },
+        { icon: "🤲", title: "哈农练指法", desc: "60 条三分法，每天热身基本功。", href: "knowledge.html#hanon" },
+        { icon: "🎼", title: "乐曲文献与进阶", desc: "巴赫、小奏鸣曲、布格缪勒、肖邦、李斯特。", href: "knowledge.html#literature" },
+        { icon: "📐", title: "钢琴小百科（术语）", desc: "连奏/断奏/踏板/音阶/琶音/装饰音……", href: "knowledge.html#glossary" },
+      ];
+      const kg = document.getElementById("kbGrid");
+      kb.forEach((c) => {
+        const a = document.createElement("a");
+        a.className = "kb-card";
+        a.href = c.href;
+        a.innerHTML = `<div class="icon">${c.icon}</div><h3>${c.title}</h3><p>${c.desc}</p><span class="more">查看 →</span>`;
+        kg.appendChild(a);
+      });
+
+      // ===== 学习历程：每个曲目 = 一块（标题 + 播放器 + 时间轴） =====
+      const jl = document.getElementById("journeyList");
+
+      pieces.forEach((p) => {
+        const block = document.createElement("div");
+        block.className = "piece";
+        block.style.setProperty("--pc", p.color);
+        block.innerHTML = `
+          <div class="piece-head">
+            <div class="piece-ico">🎵</div>
+            <div>
+              <h3>${p.title}</h3>
+              <div class="piece-sub">${p.composer} · 共 ${p.videos.length} 次录制</div>
+            </div>
+          </div>
+          <div class="player-wrap">
+            <video class="pv" controls playsinline webkit-playsinline x5-playsinline preload="none"></video>
+            <div class="pv-ph"><div class="big">▶</div><div>点击下方日期，回看当天的演奏</div></div>
+          </div>
+          <div class="timeline"></div>`;
+        jl.appendChild(block);
+
+        const video = block.querySelector(".pv");
+        const ph = block.querySelector(".pv-ph");
+        const tl = block.querySelector(".timeline");
+
+        // 播放错误提示（如 iPad 不支持的编码格式）
+        video.addEventListener("error", () => {
+          ph.style.display = "flex";
+          ph.innerHTML = `<div class="big">⚠️</div><div>该视频无法播放，请确认文件为 H.264 编码的 mp4。</div>`;
+        });
+
+        p.videos.forEach((d, i) => {
+          const n = document.createElement("div");
+          n.className = "tl-node" + (i === 0 ? " active" : "");
+          n.innerHTML = `<div class="date">${fmt(d)}</div><div class="tag pill">第 ${i + 1} 次</div>`;
+          n.onclick = () => {
+            [...tl.children].forEach((c) => c.classList.remove("active"));
+            n.classList.add("active");
+            video.src = `${p.code}/${d}.mp4`;
+            video.load();
+            ph.style.display = "none";
+            video.play().catch(() => {});
+          };
+          tl.appendChild(n);
+        });
+
+        // 预载第一首的首帧（仅元数据，不自动播放）
+        if (p.videos[0]) {
+          const fv = p.videos[0];
+          video.addEventListener(
+            "loadedmetadata",
+            () => { ph.style.display = "none"; video.addEventListener("pause", () => {}, { once: true }); },
+            { once: true }
+          );
+          // 仅在视口附近才预载，节省流量；这里直接轻量预载首页第一个曲目的首帧
+        }
+      });
+
+      // 默认预载第一个曲目的第一段（仅元数据，展示首帧）
+      if (pieces[0] && pieces[0].videos[0]) {
+        const firstBlock = jl.querySelector(".piece");
+        const fv = firstBlock.querySelector(".pv");
+        fv.preload = "metadata";
+        fv.src = `${pieces[0].code}/${pieces[0].videos[0]}.mp4`;
+        fv.load();
+      }
+    </script>
+  </body>
+</html>

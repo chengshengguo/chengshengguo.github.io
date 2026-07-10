@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>五子棋 · Mickey 星空学习站</title>
+    <meta name="description" content="经典五子棋：支持人机对战与双人对战。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .game-wrap { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-start; justify-content: center; }
+      #board { width: min(90vw, 540px); height: auto; border-radius: 14px;
+               background: linear-gradient(135deg, #1b3a4b, #0f2330); border: 1px solid var(--border); box-shadow: var(--shadow); cursor: pointer; }
+      .side { width: 280px; min-width: 240px; }
+      .side .panel + .panel { margin-top: 18px; }
+      .mode-btns { display: flex; gap: 8px; }
+      .mode-btns .btn { flex: 1; justify-content: center; padding: 10px; font-size: .9rem; }
+      .mode-btns .btn.sel { background: linear-gradient(120deg, var(--accent), var(--accent-2)); border-color: transparent; }
+      #status { font-size: 1.05rem; font-weight: 600; }
+      .scoreboard { display: flex; gap: 10px; }
+      .scoreboard .sb { flex: 1; text-align: center; padding: 10px; border-radius: 12px; background: var(--panel-strong); border: 1px solid var(--border); }
+      .scoreboard .sb b { display: block; font-size: 1.4rem; }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="index.html">首页</a>
+          <a href="astronomy.html">天文科普</a>
+          <a href="solar-system.html">太阳系模型</a>
+          <a href="english/">🅰️ 英语</a>
+          <a href="math.html">➕ 口算</a>
+          <a href="chinese/">📜 语文</a>
+
+          <a href="gomoku.html" class="active">五子棋</a>
+          <a href="sudoku/">数独</a>
+          <a href="memory.html">记忆训练</a>
+          <a href="learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <span class="eyebrow">Gomoku</span>
+        <h1>⚫ 五子棋</h1>
+        <p>横、竖、斜任意方向连成五子即获胜。可以人机对战，也可以和小伙伴双人对战。</p>
+      </header>
+
+      <section class="section container">
+        <div class="game-wrap">
+          <canvas id="board" width="540" height="540"></canvas>
+          <div class="side">
+            <div class="panel">
+              <div id="status">轮到：黑棋（你）</div>
+              <div class="scoreboard" style="margin-top:14px">
+                <div class="sb">黑<b id="scB">0</b></div>
+                <div class="sb">白<b id="scW">0</b></div>
+              </div>
+            </div>
+            <div class="panel">
+              <p class="muted" style="margin-top:0">对战模式</p>
+              <div class="mode-btns">
+                <button class="btn sel" data-mode="ai">人机对战</button>
+                <button class="btn" data-mode="pvp">双人对战</button>
+              </div>
+              <div class="flex" style="margin-top:14px">
+                <button class="btn btn-primary" id="restart">🔄 重新开始</button>
+                <button class="btn" id="undo">↩ 悔棋</button>
+              </div>
+            </div>
+            <div class="panel muted" style="font-size:.9rem">
+              小提示：人机模式下你执黑先手；白棋由电脑思考落子，会尽量连成五子并堵你的路。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer"><div class="container"><p>✨ 换个脑子？<a href="sudoku/">去玩数独 →</a></p></div></footer>
+    </div>
+
+    <script src="js/starfield.js"></script>
+    <script>
+      const N = 15, CELL = 34, M = 22;
+      const canvas = document.getElementById("board");
+      const ctx = canvas.getContext("2d");
+      let board, cur, mode = "ai", over, history;
+
+      function init() {
+        board = Array.from({ length: N }, () => Array(N).fill(0));
+        cur = 1; over = false; history = [];
+        draw();
+        setStatus();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i < N; i++) {
+          ctx.beginPath(); ctx.moveTo(M, M + i * CELL); ctx.lineTo(M + (N - 1) * CELL, M + i * CELL); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(M + i * CELL, M); ctx.lineTo(M + i * CELL, M + (N - 1) * CELL); ctx.stroke();
+        }
+        // 星位
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        [3, 7, 11].forEach((r) => [3, 7, 11].forEach((c) => {
+          ctx.beginPath(); ctx.arc(M + c * CELL, M + r * CELL, 3, 0, Math.PI * 2); ctx.fill();
+        }));
+        for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (board[r][c]) stone(r, c, board[r][c]);
+      }
+
+      function stone(r, c, p) {
+        const x = M + c * CELL, y = M + r * CELL;
+        const g = ctx.createRadialGradient(x - 3, y - 3, 2, x, y, CELL / 2);
+        if (p === 1) { g.addColorStop(0, "#6b6b6b"); g.addColorStop(1, "#0a0a0a"); }
+        else { g.addColorStop(0, "#ffffff"); g.addColorStop(1, "#c4ccd8"); }
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(x, y, CELL / 2 - 2, 0, Math.PI * 2); ctx.fill();
+      }
+
+      function setStatus() {
+        const el = document.getElementById("status");
+        if (over) return;
+        if (mode === "pvp") el.textContent = `轮到：${cur === 1 ? "黑棋" : "白棋"}`;
+        else el.textContent = cur === 1 ? "轮到：黑棋（你）" : "电脑思考中…";
+      }
+
+      function win(r, c, p) {
+        const dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
+        for (const [dr, dc] of dirs) {
+          let n = 1;
+          for (const s of [1, -1]) {
+            let i = 1;
+            while (r + dr * i * s >= 0 && r + dr * i * s < N && c + dc * i * s >= 0 && c + dc * i * s < N
+              && board[r + dr * i * s][c + dc * i * s] === p) { n++; i++; }
+          }
+          if (n >= 5) return true;
+        }
+        return false;
+      }
+
+      function place(r, c, p) {
+        board[r][c] = p; history.push([r, c]);
+        stone(r, c, p);
+        if (win(r, c, p)) {
+          over = true;
+          const who = mode === "pvp" ? (p === 1 ? "黑棋" : "白棋") : (p === 1 ? "你（黑棋）赢了！🎉" : "电脑（白棋）赢了");
+          document.getElementById("status").textContent = `🏆 ${who} 获胜！`;
+          if (p === 1) document.getElementById("scB").textContent = +document.getElementById("scB").textContent + 1;
+          else document.getElementById("scW").textContent = +document.getElementById("scW").textContent + 1;
+          return true;
+        }
+        if (history.length === N * N) { over = true; document.getElementById("status").textContent = "平局！"; return true; }
+        cur = p === 1 ? 2 : 1;
+        setStatus();
+        return false;
+      }
+
+      // 简单 AI：评估每个空点的进攻与防守价值
+      function scoreAt(r, c, p) {
+        const dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
+        let total = 0;
+        for (const [dr, dc] of dirs) {
+          let cnt = 1, open = 0;
+          for (const s of [1, -1]) {
+            let i = 1;
+            while (true) {
+              const nr = r + dr * i * s, nc = c + dc * i * s;
+              if (nr < 0 || nr >= N || nc < 0 || nc >= N) break;
+              if (board[nr][nc] === p) cnt++;
+              else if (board[nr][nc] === 0) { open++; break; }
+              else break;
+              i++;
+            }
+          }
+          const T = { 5: 100000, 4: open === 2 ? 10000 : open === 1 ? 1200 : 0,
+                      3: open === 2 ? 1000 : open === 1 ? 120 : 0,
+                      2: open === 2 ? 100 : open === 1 ? 12 : 0, 1: open === 2 ? 10 : 0 };
+          total += T[cnt] || 0;
+        }
+        return total;
+      }
+
+      function aiMove() {
+        let best = null, bestScore = -1;
+        for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+          if (board[r][c]) continue;
+          const atk = scoreAt(r, c, 2), def = scoreAt(r, c, 1);
+          const s = atk + def * 0.9;
+          if (s > bestScore) { bestScore = s; best = [r, c]; }
+        }
+        if (best) place(best[0], best[1], 2);
+      }
+
+      canvas.addEventListener("click", (e) => {
+        if (over) return;
+        if (mode === "ai" && cur !== 1) return;
+        const rect = canvas.getBoundingClientRect();
+        const c = Math.round(((e.clientX - rect.left) / rect.width * canvas.width - M) / CELL);
+        const r = Math.round(((e.clientY - rect.top) / rect.height * canvas.height - M) / CELL);
+        if (r < 0 || r >= N || c < 0 || c >= N || board[r][c]) return;
+        const finished = place(r, c, cur);
+        if (!finished && mode === "ai") setTimeout(aiMove, 250);
+      });
+
+      document.getElementById("restart").onclick = init;
+      document.getElementById("undo").onclick = () => {
+        if (!history.length) return;
+        history.pop();
+        if (mode === "ai" && history.length) history.pop();
+        board = Array.from({ length: N }, () => Array(N).fill(0));
+        history.forEach(([r, c], i) => (board[r][c] = i % 2 === 0 ? 1 : 2));
+        over = false; cur = history.length % 2 === 0 ? 1 : 2;
+        draw(); setStatus();
+      };
+      document.querySelectorAll(".mode-btns .btn").forEach((b) => {
+        b.onclick = () => {
+          document.querySelectorAll(".mode-btns .btn").forEach((x) => x.classList.remove("sel"));
+          b.classList.add("sel"); mode = b.dataset.mode; init();
+        };
+      });
+
+      init();
+    </script>
+  </body>
+</html>

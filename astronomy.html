@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>天文科普 · Mickey 星空学习站</title>
+    <meta name="description" content="从太阳系、恒星一生、银河系、仙女座到拉尼亚凯亚超星系团与整个宇宙的天文科普。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .toc { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px; }
+      .toc a { font-size: .85rem; padding: 6px 14px; border-radius: 999px; background: var(--panel-strong); border: 1px solid var(--border); color: var(--muted); text-decoration: none; }
+      .toc a:hover { color: #fff; border-color: var(--border-glow); }
+      .ladder { list-style: none; margin: 0; padding: 0; counter-reset: l; }
+      .ladder li { display: flex; gap: 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--border); }
+      .ladder li b { color: var(--accent-2); min-width: 130px; }
+      details { padding: 14px 4px; border-bottom: 1px solid var(--border); }
+      details:last-child { border-bottom: none; }
+      summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; list-style: none; }
+      summary::-webkit-details-marker { display: none; }
+      summary::before { content: "▸ "; color: var(--accent-2); }
+      details[open] summary::before { content: "▾ "; }
+      details p { margin: 10px 0 4px; }
+      .scale-note { font-size: .9rem; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="index.html">首页</a>
+          <a href="astronomy.html" class="active">天文科普</a>
+          <a href="solar-system.html">太阳系模型</a>
+          <a href="english/">🅰️ 英语</a>
+          <a href="math.html">➕ 口算</a>
+          <a href="chinese/">📜 语文</a>
+          <a href="gomoku.html">五子棋</a>
+          <a href="sudoku/">数独</a>
+          <a href="memory.html">记忆训练</a>
+          <a href="learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <span class="eyebrow">Astronomy</span>
+        <h1>🌌 天文科普小课堂</h1>
+        <p>宇宙很大，但我们也可以用很简单的话把它讲明白。从脚下的太阳系，一直讲到整个宇宙。</p>
+        <div class="toc">
+          <a href="#solar">太阳系</a>
+          <a href="#star">恒星的一生</a>
+          <a href="#milky">银河系</a>
+          <a href="#andromeda">仙女座星系</a>
+          <a href="#laniakea">拉尼亚凯亚</a>
+          <a href="#universe">可观测宇宙</a>
+          <a href="#origin">起源与组成</a>
+          <a href="#ladder">宇宙尺度阶梯</a>
+          <a href="#faq">小问号</a>
+        </div>
+      </header>
+
+      <!-- 太阳系 -->
+      <section class="section container" id="solar">
+        <div class="section-head"><h2>☀️ 我们的太阳系</h2><p>太阳占了太阳系总质量的 99.86%，八大行星绕着它转。</p></div>
+        <div class="grid">
+          <article class="card"><div class="icon">🔥</div><h3>太阳是一颗恒星</h3><p>太阳像一个巨大的“核聚变工厂”，核心把氢变成氦，每秒“烧掉”约 6 亿吨氢，放出光和热。它已经稳定燃烧了约 46 亿年。</p></article>
+          <article class="card"><div class="icon">🪨</div><h3>四颗岩石行星</h3><p>离太阳近的水星、金星、地球、火星，表面是固体岩石。地球是唯一已知有生命的星球。</p></article>
+          <article class="card"><div class="icon">💨</div><h3>四颗巨行星</h3><p>木星、土星是气态巨行星，天王星、海王星是冰巨星。木星最大，土星有美丽的光环。</p></article>
+          <article class="card"><div class="icon">❄️</div><h3>太阳系的外围</h3><p>海王星之外还有柯伊伯带和更遥远的奥尔特云，许多彗星就来自那里。</p></article>
+        </div>
+        <p class="scale-note center" style="margin-top:18px">想看行星怎么转？👉 <a href="solar-system.html" style="color:var(--accent-2)">进入太阳系模型</a></p>
+      </section>
+
+      <!-- 恒星的一生 -->
+      <section class="section container" id="star">
+        <div class="section-head"><h2>⭐ 恒星的一生</h2><p>恒星也会出生、长大、变老，最后有不同的“结局”。</p></div>
+        <div class="grid">
+          <article class="card"><div class="icon">🌫️</div><h3>1. 诞生于星云</h3><p>恒星诞生在巨大的气体和尘埃云（星云）里。引力让云团中心收缩、变热，形成“原恒星”。</p></article>
+          <article class="card"><div class="icon">💡</div><h3>2. 主序星阶段</h3><p>核心温度足够高时，氢聚变成氦，恒星稳定发光。这是恒星一生中最长的阶段，约占 90% 的时间。</p></article>
+          <article class="card"><div class="icon">🔴</div><h3>3. 变成红巨星</h3><p>氢用完后，外壳膨胀、表面变红变冷，恒星变成“红巨星”，体积可以变得非常大。</p></article>
+          <article class="card"><div class="icon">🤍</div><h3>4. 太阳级的结局</h3><p>像太阳这样中等质量的恒星，会抛掉外壳形成“行星状星云”，核心留下一颗慢慢冷却的“白矮星”。</p></article>
+          <article class="card"><div class="icon">💥</div><h3>5. 大质量恒星的爆炸</h3><p>质量超过太阳约 8 倍的恒星，临终会剧烈爆炸成“超新星”，核心塌缩成中子星，甚至黑洞。</p></article>
+        </div>
+      </section>
+
+      <!-- 银河系 -->
+      <section class="section container" id="milky">
+        <div class="section-head"><h2>🌠 我们的银河系</h2><p>太阳只是银河系里数千亿颗恒星中普通的一颗。</p></div>
+        <div class="grid">
+          <article class="card"><div class="icon">🌀</div><h3>棒旋星系</h3><p>银河系是一个“棒旋星系”：中间有个棒状结构，四周是旋转的旋臂。直径约 10 万光年。</p></article>
+          <article class="card"><div class="icon">📊</div><h3>数千亿颗恒星</h3><p>银河系里大约有 1000 亿到 4000 亿颗恒星，还有大量气体、尘埃和黑洞。</p></article>
+          <article class="card"><div class="icon">📍</div><h3>太阳在哪儿</h3><p>太阳距银河系中心约 2.7 万光年，位于“猎户臂”上，并不是中心。</p></article>
+          <article class="card"><div class="icon">⏱️</div><h3>一个“银河年”</h3><p>太阳绕银河系中心转一圈，大约要 2.3 亿年。从恐龙时代到现在，也才转了一圈多。</p></article>
+          <article class="card"><div class="icon">🕳️</div><h3>银心的大黑洞</h3><p>银河系中心藏着一个超大质量黑洞——“人马座 A*”，质量约为太阳的 400 万倍。</p></article>
+        </div>
+      </section>
+
+      <!-- 仙女座 -->
+      <section class="section container" id="andromeda">
+        <div class="section-head"><h2>🌟 本星系群与仙女座星系</h2><p>银河系并不是“宇宙孤星”，它有自己的邻居。</p></div>
+        <div class="grid">
+          <article class="card"><div class="icon">👫</div><h3>本星系群</h3><p>银河系和仙女座、三角座等约 80 个星系组成“本星系群”，跨度约 1000 万光年。</p></article>
+          <article class="card"><div class="icon">🌌</div><h3>仙女座星系（M31）</h3><p>距地球约 254 万光年，是离我们最近的大星系，也是北半球肉眼唯一能直接看见的河外星系。</p></article>
+          <article class="card"><div class="icon">🚀</div><h3>正在靠近我们</h3><p>仙女座正以约每秒 110 千米的速度向银河系靠近。约 45 亿年后，两者会合并成一个更大的星系。</p></article>
+          <article class="card"><div class="icon">💞</div><h3>未来的“银河仙女星系”</h3><p>科学家给合并后的星系起了个名字叫“Milkomeda”。到那时，夜空会比现在壮观得多。</p></article>
+        </div>
+      </section>
+
+      <!-- 拉尼亚凯亚 -->
+      <section class="section container" id="laniakea">
+        <div class="section-head"><h2>🗺️ 拉尼亚凯亚超星系团</h2><p>把视野再放大，我们属于一个极其巨大的宇宙“ neighborhood”。</p></div>
+        <div class="grid">
+          <article class="card"><div class="icon">🌐</div><h3>什么是超星系团</h3><p>许多星系聚成“星系团”，许多星系团再聚成“超星系团”。拉尼亚凯亚就是包含我们的一大团。</p></article>
+          <article class="card"><div class="icon">🔢</div><h3>约 10 万个星系</h3><p>拉尼亚凯亚超星系团包含约 10 万个星系，跨度约 5.2 亿光年，是一个超级宏大的结构。</p></article>
+          <article class="card"><div class="icon">📡</div><h3>我们在边缘</h3><p>我们的本星系群位于拉尼亚凯亚的边缘地带，并不是中心。</p></article>
+          <article class="card"><div class="icon">🏝️</div><h3>名字的由来</h3><p>“拉尼亚凯亚”在夏威夷语里意为“无尽的天堂”，是 2014 年科学家正式命名的。</p></article>
+          <article class="card"><div class="icon">🧲</div><h3>被“巨引源”吸引</h3><p>拉尼亚凯亚里的星系，整体朝着一个叫“巨引源”的方向缓缓移动。</p></article>
+        </div>
+      </section>
+
+      <!-- 可观测宇宙 -->
+      <section class="section container" id="universe">
+        <div class="section-head"><h2>🌠 可观测宇宙</h2><p>再往外，就是我们目前能看到的最大范围——“可观测宇宙”。</p></div>
+        <div class="grid">
+          <article class="card"><div class="icon">📏</div><h3>约 930 亿光年宽</h3><p>可观测宇宙的直径约 930 亿光年。因为宇宙在膨胀，它的半径达到了约 465 亿光年。</p></article>
+          <article class="card"><div class="icon">🌌</div><h3>约 2 万亿个星系</h3><p>在可观测宇宙里，估计有约 2 万亿个星系，每个星系又有千亿颗恒星——星星多到数不清。</p></article>
+          <article class="card"><div class="icon">⏳</div><h3>看得越远，看得越古老</h3><p>光要走很久才到地球。我们看到遥远的星星，其实看到的是它们很久以前的模样，像一台“时光机”。</p></article>
+          <article class="card"><div class="icon">🔭</div><h3>还有看不到的</h3><p>“可观测”之外还有更多宇宙，因为那里的光还没来得及到达我们。宇宙到底有多大，至今仍是谜。</p></article>
+        </div>
+      </section>
+
+      <!-- 起源与组成 -->
+      <section class="section container" id="origin">
+        <div class="section-head"><h2>💥 宇宙的起源与组成</h2><p>宇宙从哪里来？又由什么组成？</p></div>
+        <div class="grid">
+          <article class="card"><div class="icon">🌟</div><h3>大爆炸</h3><p>约 138 亿年前，宇宙从一个极热、极密的小点开始膨胀，一直到现在还在变大——这就是“宇宙大爆炸”。</p></article>
+          <article class="card"><div class="icon">📻</div><h3>宇宙的第一张“照片”</h3><p>宇宙诞生约 38 万年后，留下了微弱的“宇宙微波背景辐射”，像是婴儿宇宙的照片。</p></article>
+          <article class="card"><div class="icon">🌑</div><h3>看不见的暗物质</h3><p>约 27% 的宇宙是“暗物质”，它不发光，却用引力把星系“拉”在一起。</p></article>
+          <article class="card"><div class="icon">⚡</div><h3>推动膨胀的暗能量</h3><p>约 68% 的宇宙是“暗能量”，它像一种神秘的力量，正在让宇宙加速膨胀。</p></article>
+          <article class="card"><div class="icon">⚪</div><h3>我们熟悉的物质</h3><p>恒星、行星、你我，这些“普通物质”加起来只约占宇宙的 5%。</p></article>
+        </div>
+      </section>
+
+      <!-- 尺度阶梯 -->
+      <section class="section container" id="ladder">
+        <div class="section-head"><h2>🪜 宇宙尺度阶梯</h2><p>从地球出发，一层层感受宇宙有多大（距离只是大致数字）。</p></div>
+        <div class="panel">
+          <ol class="ladder">
+            <li><b>地球 → 月球</b><span class="muted">约 38 万千米</span></li>
+            <li><b>地球 → 太阳</b><span class="muted">约 1.5 亿千米（1 个天文单位）</span></li>
+            <li><b>到海王星</b><span class="muted">约 45 亿千米</span></li>
+            <li><b>到最近恒星（比邻星）</b><span class="muted">约 4.2 光年</span></li>
+            <li><b>银河系直径</b><span class="muted">约 10 万光年</span></li>
+            <li><b>到仙女座星系</b><span class="muted">约 254 万光年</span></li>
+            <li><b>拉尼亚凯亚跨度</b><span class="muted">约 5.2 亿光年</span></li>
+            <li><b>可观测宇宙半径</b><span class="muted">约 465 亿光年</span></li>
+          </ol>
+          <p class="scale-note">“光年”是距离单位：光走一年约 9.5 万亿千米。数字越大，代表离我们越远。</p>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section container" id="faq">
+        <div class="section-head"><h2>❓ 常见小问号</h2><p>点开看看，答案可能和你想的不一样。</p></div>
+        <div class="panel">
+          <details open><summary>为什么星星会眨眼睛？</summary><p class="muted">因为星光穿过地球动荡的大气层时被不断折射，看起来就一闪一闪。太空中不会眨眼。</p></details>
+          <details><summary>宇宙外面是什么？</summary><p class="muted">“外面”可能没有意义——宇宙包含了空间本身。这个问题连科学家也在探索。</p></details>
+          <details><summary>我们能看到多少年前的光？</summary><p class="muted">太阳光约 8 分钟前发出；看到比邻星，是 4 年多前的光；看仙女座，则是 254 万年前的光。望远镜就像时光机。</p></details>
+          <details><summary>黑洞会把东西“吃掉”吗？</summary><p class="muted">黑洞引力极强，连光都逃不出。但掉进去的物质并没有消失，只是被压缩到极小的地方。</p></details>
+          <details><summary>宇宙会一直膨胀下去吗？</summary><p class="muted">目前的观测表明，宇宙正在加速膨胀，而且很可能一直膨胀下去。</p></details>
+        </div>
+      </section>
+
+      <footer class="footer"><div class="container"><p>✨ 想亲眼看行星转起来吗？<a href="solar-system.html">进入太阳系模型 →</a> ｜ <a href="index.html">回到首页</a></p></div></footer>
+    </div>
+
+    <script src="js/starfield.js"></script>
+  </body>
+</html>

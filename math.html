@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>口算闯关 · Mickey 星空学习站</title>
+    <meta name="description" content="适合小学生的口算练习：加、减、乘混合，计时计分，帮三年级打好计算基础。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .game-wrap { max-width: 460px; margin: 0 auto; }
+      .quiz-panel { text-align: center; }
+      .problem { font-size: clamp(2.4rem, 9vw, 3.4rem); font-weight: 800; margin: 8px 0 4px; letter-spacing: 2px; }
+      .problem .op { color: var(--accent-2); margin: 0 10px; }
+      .problem .q { color: var(--accent-3); }
+      .feedback { min-height: 26px; font-weight: 700; margin: 4px 0 10px; }
+      .feedback.ok { color: #46d39a; }
+      .feedback.no { color: #ff7a7a; }
+      .answer-box { font-size: 2rem; font-weight: 800; min-height: 48px; padding: 6px 0; color: var(--gold); }
+      .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+      .pad button { padding: 16px; font-size: 1.4rem; font-weight: 700; border-radius: 14px; background: var(--panel-strong); border: 1px solid var(--border); color: var(--text); cursor: pointer; font-family: inherit; }
+      .pad button:active { border-color: var(--border-glow); }
+      .pad .go { background: linear-gradient(120deg, var(--accent), var(--accent-2)); border-color: transparent; color: #fff; }
+      .pad .del { color: var(--muted); }
+      .stats { display: flex; justify-content: space-around; margin: 14px 0; }
+      .stats div { text-align: center; }
+      .stats b { display: block; font-size: 1.5rem; color: var(--accent-2); }
+      .mode-btns { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+      .mode-btns .btn { padding: 10px 16px; font-size: .9rem; }
+      .mode-btns .btn.sel { background: linear-gradient(120deg, var(--accent), var(--accent-2)); border-color: transparent; color: #fff; }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="index.html">首页</a>
+          <a href="astronomy.html">天文科普</a>
+          <a href="solar-system.html">太阳系模型</a>
+          <a href="english/">🅰️ 英语</a>
+          <a href="math.html" class="active">➕ 口算</a>
+          <a href="chinese/">📜 语文</a>
+          <a href="gomoku.html">五子棋</a>
+          <a href="sudoku/">数独</a>
+          <a href="memory.html">记忆训练</a>
+          <a href="learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <span class="eyebrow">Mental Math</span>
+        <h1>➕ 口算闯关</h1>
+        <p>选一种题型，看算式、点数字作答。答对得分，看看你能连对多少！</p>
+      </header>
+
+      <section class="section container">
+        <div class="game-wrap">
+          <div class="mode-btns">
+            <button class="btn sel" data-t="add">加法</button>
+            <button class="btn" data-t="sub">减法</button>
+            <button class="btn" data-t="mul">乘法</button>
+            <button class="btn" data-t="mix">混合</button>
+          </div>
+          <div class="panel quiz-panel">
+            <div class="stats">
+              <div>得分<b id="score">0</b></div>
+              <div>连对<b id="streak">0</b></div>
+              <div>用时<b id="timer">00:00</b></div>
+            </div>
+            <div class="problem" id="problem"></div>
+            <div class="answer-box" id="answer"></div>
+            <div class="feedback" id="feedback"></div>
+            <div class="pad">
+              <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+              <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+              <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+              <button class="del" data-k="del">⌫</button><button data-k="0">0</button><button class="go" data-k="go">✔</button>
+            </div>
+            <div class="flex" style="justify-content:center;margin-top:14px">
+              <button class="btn" id="next">⏭ 跳过这题</button>
+              <button class="btn" id="reset">🔄 重新开始</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer"><div class="container"><p>✨ 去读首古诗？<a href="chinese/">语文天地 →</a> ｜ <a href="index.html">回到首页</a></p></div></footer>
+    </div>
+
+    <script src="js/starfield.js"></script>
+    <script>
+      let type = "add", a, b, op, ans, input = "", locked = false;
+      let score = 0, streak = 0, timer = 0, timerId = null;
+
+      function rnd(n) { return Math.floor(Math.random() * n); }
+      function newProblem() {
+        let t = type === "mix" ? ["add", "sub", "mul"][rnd(3)] : type;
+        if (t === "add") { a = rnd(90) + 10; b = rnd(90) + 10; op = "+"; ans = a + b; }
+        else if (t === "sub") { a = rnd(90) + 10; b = rnd(a); op = "−"; ans = a - b; }
+        else { a = rnd(9) + 1; b = rnd(9) + 1; op = "×"; ans = a * b; }
+        input = ""; locked = false;
+        render();
+      }
+      function render() {
+        document.getElementById("problem").innerHTML = `${a} <span class="op">${op}</span> ${b} <span class="op">=</span> <span class="q">?</span>`;
+        document.getElementById("answer").textContent = input || "";
+      }
+      function press(k) {
+        if (locked) return;
+        if (k === "del") input = input.slice(0, -1);
+        else if (k === "go") return submit();
+        else if (input.length < 4) input += k;
+        render();
+      }
+      function submit() {
+        if (locked || input === "") return;
+        locked = true;
+        const fb = document.getElementById("feedback");
+        if (parseInt(input, 10) === ans) {
+          score += 10; streak++;
+          fb.textContent = "✅ 答对啦！+10"; fb.className = "feedback ok";
+          document.getElementById("score").textContent = score;
+          document.getElementById("streak").textContent = streak;
+          setTimeout(newProblem, 650);
+        } else {
+          streak = 0;
+          fb.textContent = `❌ 正确答案：${ans}`; fb.className = "feedback no";
+          document.getElementById("streak").textContent = 0;
+        }
+      }
+      function fmt(s) { return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
+      function startTimer() { stopTimer(); timer = 0; timerId = setInterval(() => { timer++; document.getElementById("timer").textContent = fmt(timer); }, 1000); }
+      function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
+
+      document.querySelectorAll(".pad button").forEach((b) => (b.onclick = () => press(b.dataset.k)));
+      document.getElementById("next").onclick = () => { if (!locked) newProblem(); };
+      document.getElementById("reset").onclick = () => { score = 0; streak = 0; document.getElementById("score").textContent = 0; document.getElementById("streak").textContent = 0; document.getElementById("feedback").textContent = ""; newProblem(); startTimer(); };
+      document.querySelectorAll(".mode-btns .btn").forEach((b) => {
+        b.onclick = () => { document.querySelectorAll(".mode-btns .btn").forEach((x) => x.classList.remove("sel")); b.classList.add("sel"); type = b.dataset.t; document.getElementById("feedback").textContent = ""; newProblem(); };
+      });
+
+      newProblem(); startTimer();
+    </script>
+  </body>
+</html>

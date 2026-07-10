@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>语文天地 · Mickey 星空学习站</title>
+    <meta name="description" content="小学阶段必背古诗词 + 常用成语：带拼音、大意与朗读，学习进度保存在浏览器本地数据库。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="page">
+      <nav class="navbar">
+        <a class="brand" href="../index.html"><span class="logo">🚀</span><span>Mickey 星空学习站</span></a>
+        <div class="nav-links">
+          <a href="../index.html">首页</a>
+          <a href="../astronomy.html">天文科普</a>
+          <a href="../solar-system.html">太阳系模型</a>
+          <a href="../english/">🅰️ 英语</a>
+          <a href="../math.html">➕ 口算</a>
+          <a href="../chinese/" class="active">📜 语文</a>
+          <a href="../gomoku.html">五子棋</a>
+          <a href="../sudoku/">数独</a>
+          <a href="../memory.html">记忆训练</a>
+          <a href="../learn_plan/index.html">📅 暑假计划</a>
+        </div>
+      </nav>
+
+      <header class="subhero container">
+        <span class="eyebrow">Chinese</span>
+        <h1>📜 语文天地</h1>
+        <p>覆盖整个小学阶段的必背古诗词与常用成语。点 🔊 听朗读，点 ⭐ 收藏、✅ 标记已学会，进度自动保存在你的浏览器本地数据库里。</p>
+      </header>
+
+      <section class="section container">
+        <div class="stats" id="stats"></div>
+
+        <div class="tabs" id="tabs">
+          <button class="tab sel" data-t="poem">📖 古诗词</button>
+          <button class="tab" data-t="idiom">🀄 成语</button>
+        </div>
+
+        <div class="toolbar" id="toolPoem">
+          <input id="poemSearch" class="search" placeholder="搜索诗名 / 作者 / 大意…" />
+          <select id="poemGrade" class="select">
+            <option value="all">全部年级</option>
+            <option value="1">一年级</option>
+            <option value="2">二年级</option>
+            <option value="3">三年级</option>
+            <option value="4">四年级</option>
+            <option value="5">五年级</option>
+            <option value="6">六年级</option>
+          </select>
+        </div>
+
+        <div class="toolbar" id="toolIdiom" style="display:none">
+          <input id="idiomSearch" class="search" placeholder="搜索成语 / 释义 / 例句…" />
+        </div>
+
+        <div class="grid" id="list"></div>
+        <p class="muted center" id="empty" style="display:none">没有找到匹配的内容，换个关键词试试～</p>
+      </section>
+
+      <footer class="footer"><div class="container"><p>✨ 想去星空里看看？<a href="../astronomy.html">天文科普 →</a> ｜ <a href="../index.html">回到首页</a></p></div></footer>
+    </div>
+
+    <script src="../js/starfield.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3/dist/index.js"></script>
+    <script src="db.js"></script>
+    <script src="data/poems.js"></script>
+    <script src="data/idioms.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
